@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 4.1)
+project(TTRPG)
+
+set(CMAKE_CXX_STANDARD 23)
+
+add_executable(
+        TTRPG Main.cpp
+        core/src/Actor.cpp
+        core/src/AssetManager.cpp
+        core/src/AStar.cpp
+        environment/src/Map.cpp
+        core/src/Utils.cpp
+        characters/src/Character.cpp
+        characters/include/Character.h
+        characters/src/Player.cpp
+        characters/include/Player.h
+        core/src/Animation.cpp
+        core/include/Animation.h
+        environment/src/Interactable.cpp
+)
+
+find_path(RAYLIB_CPP_INCLUDE_DIRS "raylib-cpp.hpp")
+target_include_directories(TTRPG PRIVATE
+        ${RAYLIB_CPP_INCLUDE_DIRS}
+        characters/include
+        core/include
+        environment/include
+)
+
+find_package(raylib CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(TTRPG PRIVATE
+        raylib
+        nlohmann_json::nlohmann_json
+)

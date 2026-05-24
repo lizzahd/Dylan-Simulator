@@ -14,6 +14,7 @@
 #include <Character.h>
 #include <AssetManager.h>
 #include <Interactable.h>
+#include <map>
 #include <Utils.h>
 
 class Map;
@@ -29,6 +30,12 @@ public:
 
     template<typename T>
     void addEntityByBroadType(T* ptr) {
+        // Layer Scheisse
+        const int id = ptr->getId();
+        const int layer = ptr->getLayer();
+        m_layerIndex[layer].push_back(id);
+
+        // Type Scheisse
         switch (ptr->getBroadType()) {
             case EntityBroadType::Character: {
                 m_entitiesByType[std::type_index(typeid(Character))].push_back(ptr->getId());
@@ -85,6 +92,16 @@ public:
     }
 
     void remove(const int id) {
+        const auto it = m_entities.find(id);
+        if (it == m_entities.end()) {
+            return;
+        }
+
+        // Layer Scheisse
+        const int layer = it->second->getLayer();
+        auto &vec = m_layerIndex[layer];
+        std::erase(vec, id);
+
         m_entities.erase(id);
         for (auto& entityIds : m_entitiesByType | std::views::values) {
             std::erase(entityIds, id);
@@ -100,10 +117,21 @@ public:
             }
 
             entity->update();
-            entity->draw();
+            // entity->draw();
+            //
+            // if (inDebugMode) {
+            //     entity->drawDebug();
+            // }
+        }
 
-            if (inDebugMode) {
-                entity->drawDebug();
+        // Gotta draw separately due to layering. A bit expensive
+        for (const auto &ids: m_layerIndex | std::views::values) {
+            for (const int id : ids) {
+                m_entities[id]->draw();
+
+                if (inDebugMode) {
+                    m_entities[id]->drawDebug();
+                }
             }
         }
 
@@ -146,12 +174,34 @@ public:
         return false;
     }
 
+    // Layer Scheisse
+    void setLayer(const int id, const int layer) {
+        const auto it = m_entities.find(id);
+        if (it == m_entities.end()) {
+            return;
+        }
+
+        const int oldLayer = it->second->getLayer();
+        if (oldLayer == layer) {
+            return;
+        }
+
+        auto &oldVec = m_layerIndex[oldLayer];
+        std::erase(oldVec, id);
+
+        it->second->setLayer(layer);
+        m_layerIndex[layer].push_back(id);
+    }
+
     int m_nextId = 0;
 private:
     std::unordered_map<int, std::unique_ptr<IEntity>> m_entities;
-    // This is so I can just find all structures or units real quick
+
+    // This is so I can just find all structures or units really fast
     std::unordered_map<std::type_index, std::vector<int>> m_entitiesByType;
+
     std::shared_ptr<AssetManager> m_assetManager;
     std::shared_ptr<Camera2D> m_camera;
     std::shared_ptr<Map> m_map;
+    std::map<int, std::vector<int>> m_layerIndex;
 };

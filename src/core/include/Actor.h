@@ -65,6 +65,14 @@ public:
         return m_isDead;
     }
 
+    [[nodiscard]] int getLayer() const override {
+        return m_layer;
+    }
+
+    void setLayer(const int layer) override {
+        m_layer = layer;
+    }
+
     [[nodiscard]] int getId() const override {
         return m_id;
     }
@@ -112,4 +120,5 @@ protected:
     std::shared_ptr<AssetManager> m_assetManager;
     std::shared_ptr<Camera2D> m_camera;
     std::shared_ptr<Map> m_map;
+    int m_layer = 1;
 };

@@ -11,6 +11,8 @@
 #include <raylib-cpp/Color.hpp>
 #include <Actor.h>
 
+#include "AssetManager.h"
+
 class AssetManager;
 
 class Interactable : public Actor {
@@ -19,11 +21,16 @@ public:
         ENTITY_REQUIREMENTS,
         std::string &tex,
         const raylib::Vector2 pos,
-        std::vector<raylib::Vector2> &points)
-        : Actor(ENTITY_PARAMETERS, EntityBroadType::Interactable, EntityType::Interactable, pos, {24, 34})
-        , m_tex(std::move(tex))
-        , m_points(std::move(points))
-    {}
+        const std::vector<raylib::Vector2> &points)
+        : Actor(ENTITY_PARAMETERS, EntityBroadType::Interactable, EntityType::Interactable, pos, assetManager->getTex(tex).GetSize())
+        , m_tex(std::move(tex)) {
+        m_layer = 0;
+
+        // Offset points for easier setup
+        for (const auto &point : points) {
+            m_points.push_back(point + pos);
+        }
+    }
 
     void update() override;
     void draw() const override;
@@ -34,6 +41,5 @@ public:
     [[nodiscard]] raylib::Color getTint() const;
 
     std::string m_tex;
-    raylib::Vector2 m_pos;
     std::vector<raylib::Vector2> m_points;
 };

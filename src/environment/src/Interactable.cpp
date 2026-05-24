@@ -9,6 +9,8 @@
 #include "AssetManager.h"
 #include <EntityManager.h>
 
+#define INTERACTION_DIST 150
+
 void Interactable::update() {
 
 }
@@ -24,7 +26,10 @@ void Interactable::draw() const {
 }
 
 void Interactable::drawDebug() const {
-    DrawTriangleFan(m_points.data(), m_points.size(), LIME);
+    for (int i = 0; i < m_points.size() - 1; i++) {
+        m_points.at(i).DrawLine(m_points.at(i + 1), LIME);
+    }
+    m_points.front().DrawLine(m_points.back(), LIME);
 }
 
 bool Interactable::canInteract() const {
@@ -34,7 +39,7 @@ bool Interactable::canInteract() const {
             return false;
         }
 
-        if (m_pos.Distance(other->m_pos) < 150) {
+        if (m_pos.Distance(other->m_pos) < INTERACTION_DIST) {
             return true;
         }
 
@@ -55,5 +60,5 @@ raylib::Color Interactable::getTint() const {
         return LIME;
     }
 
-    return GRAY;
+    return RED;
 }

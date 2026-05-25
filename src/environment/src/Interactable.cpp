@@ -25,13 +25,6 @@ void Interactable::draw() const {
     );
 }
 
-void Interactable::drawDebug() const {
-    for (int i = 0; i < m_points.size() - 1; i++) {
-        m_points.at(i).DrawLine(m_points.at(i + 1), LIME);
-    }
-    m_points.front().DrawLine(m_points.back(), LIME);
-}
-
 bool Interactable::canInteract() const {
     // TODO: Un-Hardcode
     return m_entityManager->breakableExecByType<Character>([&](const int, const auto other) {
@@ -48,7 +41,16 @@ bool Interactable::canInteract() const {
 }
 
 bool Interactable::isHovered() const {
-    return CheckCollisionPointPoly(GetMousePosition(), m_points.data(), m_points.size());
+    // Check if mouse position on pixel
+    // This might be expensive
+    const auto [mx, my] = GetMousePosition();
+    const int x = static_cast<int>(mx - m_pos.x);
+    const int y = static_cast<int>(my - m_pos.y);
+    if (x < 0 || x >= m_size.x || y < 0 || y >= m_size.y) {
+        return false;
+    }
+    const raylib::Color color = GetImageColor(m_assetManager->getTex(m_tex), x, y);
+    return color.a > 0;
 }
 
 raylib::Color Interactable::getTint() const {

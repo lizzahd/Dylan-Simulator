@@ -34,26 +34,12 @@ int main() {
     const auto player = entityManager->create<Player>(raylib::Vector2{200, 200});
 
     // Window
-    std::vector<raylib::Vector2> points{
-        {0, 0},
-        {23, 3},
-        {22, 33},
-        {1, 32},
-    };
     std::string path = "window";
-    entityManager->create<Interactable>(path, raylib::Vector2{259, 351}, points);
+    entityManager->create<Interactable>(path, raylib::Vector2{259, 351});
 
     // Service Panel
-    points = {
-        {0, 6},
-        {15, 0},
-        {25, 3},
-        {25, 39},
-        {10, 46},
-        {1, 43},
-    };
     path = "service_panel";
-    entityManager->create<Interactable>(path, raylib::Vector2{482, 356}, points);
+    entityManager->create<Interactable>(path, raylib::Vector2{482, 356});
 
     while (!window.ShouldClose()) {
         camera->target = player->m_pos;

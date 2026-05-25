@@ -6,6 +6,8 @@
 
 #include <raylib-cpp/Rectangle.hpp>
 
+#include "Utils.h"
+
 void Animation::update() {
     if (!m_playing) {
         return;
@@ -24,9 +26,21 @@ void Animation::update() {
 }
 
 void Animation::draw(const raylib::Vector2 pos, const float ySrcOffset) const {
+    const raylib::Rectangle src{static_cast<float>(m_currentFrame) * m_size.x, ySrcOffset * m_size.y, m_size.x, m_size.y};
+    const raylib::Rectangle dst{pos, m_size};
+
+    // It's shadow time
     m_assetManager->getTex(m_tex).Draw(
-        raylib::Rectangle{static_cast<float>(m_currentFrame) * m_size.x, ySrcOffset * m_size.y, m_size.x, m_size.y},
-        raylib::Rectangle{pos, m_size},
+        src,
+        raylib::Rectangle{pos.x, pos.y, m_size.x, m_size.y},
+        m_origin,
+        -60,
+        raylib::Color{0, 0, 0, 155}
+    );
+
+    m_assetManager->getTex(m_tex).Draw(
+        src,
+        dst,
         m_origin
     );
 }

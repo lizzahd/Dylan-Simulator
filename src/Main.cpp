@@ -31,6 +31,8 @@ int main() {
 
     // Entity management
     const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map);
+    entityManager->registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
+
     const auto player = entityManager->create<Player>(raylib::Vector2{200, 200});
 
     // Window
@@ -40,6 +42,22 @@ int main() {
     // Service Panel
     path = "service_panel";
     entityManager->create<Interactable>(path, raylib::Vector2{482, 356});
+
+    // Loop through entityManager
+    // Characters
+    entityManager->execByType<Character>([&](int, const auto &entity) {
+        __nop();
+    });
+
+    // Interactables
+    entityManager->execByType<Interactable>([&](int, const auto &entity) {
+        __nop();
+    });
+
+    // Actors
+    entityManager->execByType<Actor>([&](int, const auto &entity) {
+        __nop();
+    });
 
     while (!window.ShouldClose()) {
         camera->target = player->m_pos;

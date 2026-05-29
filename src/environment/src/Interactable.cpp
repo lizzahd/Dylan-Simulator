@@ -9,6 +9,8 @@
 #include "AssetManager.h"
 #include <EntityManager.h>
 
+#include "Character.h"
+
 #define INTERACTION_DIST 150
 
 void Interactable::update() {

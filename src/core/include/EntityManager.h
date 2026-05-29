@@ -8,13 +8,10 @@
 #include <ranges>
 #include <typeindex>
 #include <unordered_map>
+#include <map>
 
 #include <IEntity.h>
-#include <Actor.h>
-#include <Character.h>
 #include <AssetManager.h>
-#include <Interactable.h>
-#include <map>
 #include <Utils.h>
 
 class Map;
@@ -28,30 +25,16 @@ public:
     {}
     ~EntityManager() = default;
 
-    template<typename T>
-    void addEntityByBroadType(T* ptr) {
-        // Layer Scheisse
-        const int id = ptr->getId();
-        const int layer = ptr->getLayer();
-        m_layerIndex[layer].push_back(id);
+    /// Takes a broad type and registers it to cover a list of typename(Class)'s
+    template<typename I>
+    void registerBroadType(const EntityBroadType broadType, const I typeIndices) {
+        m_broadTypeRegistry.emplace(broadType, typeIndices);
+    }
 
-        // Type Scheisse
-        switch (ptr->getBroadType()) {
-            case EntityBroadType::Character: {
-                m_entitiesByType[std::type_index(typeid(Character))].push_back(ptr->getId());
-                m_entitiesByType[std::type_index(typeid(Actor))].push_back(ptr->getId());
-                break;
-            }
-            case EntityBroadType::Interactable: {
-                m_entitiesByType[std::type_index(typeid(Interactable))].push_back(ptr->getId());
-                m_entitiesByType[std::type_index(typeid(Actor))].push_back(ptr->getId());
-                break;
-            }
-            default: {
-                m_entitiesByType[std::type_index(typeid(IEntity))].push_back(ptr->getId());
-                break;
-            }
-        }
+    /// Takes a broad type and registers it to cover a variadic amount of typename(Class)'s
+    template<typename... Args>
+    void registerBroadType(const EntityBroadType broadType, Args&&... args) {
+        registerBroadType(broadType, std::vector<std::type_index>{std::type_index(args)...});
     }
 
     template<typename T, typename... Args>
@@ -195,10 +178,27 @@ public:
 
     int m_nextId = 0;
 private:
+    template<typename T>
+    void addEntityByBroadType(T* ptr) {
+        // Layer Scheisse
+        const int id = ptr->getId();
+        const int layer = ptr->getLayer();
+        m_layerIndex[layer].push_back(id);
+
+        const auto it = m_broadTypeRegistry.find(ptr->getBroadType());
+        if (it != m_broadTypeRegistry.end()) {
+            for (const auto type : it->second) {
+                m_entitiesByType[type].push_back(id);
+            }
+        }
+    }
+
     std::unordered_map<int, std::unique_ptr<IEntity>> m_entities;
 
     // This is so I can just find all structures or units really fast
     std::unordered_map<std::type_index, std::vector<int>> m_entitiesByType;
+    // TODO: cast enum classes to int and store them as such, so they can use whatever enumerations they want
+    std::unordered_map<EntityBroadType, std::vector<std::type_index>> m_broadTypeRegistry;
 
     std::shared_ptr<AssetManager> m_assetManager;
     std::shared_ptr<Camera2D> m_camera;

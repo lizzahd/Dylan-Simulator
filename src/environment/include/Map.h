@@ -8,6 +8,12 @@
 #include <vector>
 #include <raylib-cpp/Texture.hpp>
 
+struct Geometry {
+    std::vector<raylib::Vector2> m_vertices;
+
+    void drawDebug() const;
+};
+
 class Map {
 public:
     ~Map() = default;
@@ -22,4 +28,7 @@ public:
     std::vector<raylib::Texture2D> m_backgroundLayers;
     std::vector<raylib::Texture2D> m_foregroundLayers;
     std::vector<raylib::Texture2D> m_backgroundParallaxLayers;
+
+    // Physics and shite
+    std::vector<Geometry> m_geometries;
 };

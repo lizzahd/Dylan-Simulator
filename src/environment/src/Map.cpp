@@ -11,6 +11,12 @@
 
 namespace fs = std::filesystem;
 
+void Geometry::drawDebug() const {
+    for (int i = 0; i < m_vertices.size(); i++) {
+
+    }
+}
+
 Map::Map(const std::string& roomPath) {
     // Background Textures
     for (const auto& entry : fs::directory_iterator(roomPath)) {

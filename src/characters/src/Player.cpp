@@ -10,9 +10,6 @@ void Player::update() {
     Character::update();
 
     moveDirection();
-
-    m_pos += m_vel;
-    m_vel /= 1.15;
 }
 
 void Player::moveDirection() {

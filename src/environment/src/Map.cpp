@@ -5,15 +5,20 @@
 #include <algorithm>
 #include <raylib-cpp.hpp>
 #include <filesystem>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #include <Map.h>
 #include <Utils.h>
 
 namespace fs = std::filesystem;
+using json = nlohmann::json;
 
 void Geometry::drawDebug() const {
-    for (int i = 0; i < m_vertices.size(); i++) {
+    DrawLineStrip(m_vertices.data(), m_vertices.size(), BLUE);
 
+    for (const auto &[pos1, pos2] : m_collisionLines) {
+        pos1.DrawLine(pos2, 3, RED);
     }
 }
 
@@ -44,6 +49,26 @@ Map::Map(const std::string& roomPath) {
                 break;
         }
     }
+
+    // Load geometry
+    std::ifstream f(roomPath + "/geometry.json");
+    for (const auto &g : json::parse(f)) {
+        const auto &points = g["points"];
+        std::vector<raylib::Vector2> rPoints;
+        for (const auto &p : points) {
+            rPoints.emplace_back(p["x"], p["y"]);
+        }
+
+        std::vector<Line> rCollisionLines;
+        const auto &collisionLines = g["collisionLines"];
+        for (const auto &line : collisionLines) {
+            const raylib::Vector2 pos1(line["a"]["x"], line["a"]["y"]);
+            const raylib::Vector2 pos2(line["b"]["x"], line["b"]["y"]);
+            rCollisionLines.emplace_back(pos1, pos2);
+        }
+
+        m_geometries.emplace_back(rPoints, rCollisionLines);
+    }
 }
 
 void Map::drawBackgroundLayers() const {
@@ -59,8 +84,8 @@ void Map::drawForegroundLayers() const {
 }
 
 void Map::drawDebug() const {
-    if (!inDebugMode) {
-        return;
+    for (const auto &geometry : m_geometries) {
+        geometry.drawDebug();
     }
 
     for (const auto hitbox : m_hitboxes) {

@@ -6,6 +6,8 @@
 #include <Actor.h>
 #include "Animation.h"
 
+#define FALLING_VELOCITY 3
+
 enum class Direction {
     Right,
     DownRight,
@@ -42,6 +44,7 @@ public:
     raylib::Vector2 m_vel;
     int m_animationIndex = 0;
     Direction m_direction;
+    float m_fallingVel = 0;
 
     std::vector<Animation> m_animationBank;
 };

@@ -73,6 +73,9 @@ int main() {
 
         // Map
         map->drawBackgroundLayers();
+        if (inDebugMode) {
+            map->drawDebug();
+        }
 
         // Zero
         raylib::Vector2().DrawCircle(2, RED);

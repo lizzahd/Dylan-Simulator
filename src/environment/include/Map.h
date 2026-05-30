@@ -8,8 +8,11 @@
 #include <vector>
 #include <raylib-cpp/Texture.hpp>
 
+struct Line;
+
 struct Geometry {
     std::vector<raylib::Vector2> m_vertices;
+    std::vector<Line> m_collisionLines;
 
     void drawDebug() const;
 };

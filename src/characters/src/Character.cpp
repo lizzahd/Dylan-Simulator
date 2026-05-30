@@ -3,12 +3,35 @@
 //
 
 #include <Character.h>
-
-#include <AssetManager.h>
 #include <Utils.h>
 
 void Character::update() {
-    m_animationBank[m_animationIndex].update();
+    // Check which geometry we're in
+    const auto delta = m_pos + m_vel;
+    m_fallingVel = FALLING_VELOCITY;
+    for (const auto &g : m_map->m_geometries) {
+        if (CheckCollisionPointPoly(m_pos, g.m_vertices.data(), g.m_vertices.size())) {
+            // This is the one
+            m_fallingVel = 0;
+
+            // Check collision with each line
+            for (const auto &[a, b] : g.m_collisionLines) {
+                const auto result = linesCollisionPoint(m_pos, delta, a, b);
+                if (result.has_value()) {
+                    m_vel = 0;
+                }
+            }
+        }
+    }
+
+    if (m_fallingVel > 0) {
+        m_pos.y += m_fallingVel;
+        m_vel = 0;
+    } else {
+        m_animationBank[m_animationIndex].update();
+        m_pos += m_vel;
+        m_vel /= 1.15;
+    }
 }
 
 void Character::draw() const {
@@ -22,9 +45,8 @@ void Character::draw() const {
 }
 
 void Character::drawDebug() const {
-    getRect().DrawLines(WHITE, 2);
-    const auto center = getCenter();
-    center.DrawLine(center + getVector() * 32, BLUE);
+    m_pos.DrawLine(m_pos + getVector() * 32, BLUE);
+    m_pos.DrawLine(m_pos + m_vel, 2, LIME);
 }
 
 void Character::switchAnimation(const int animationIndex) {

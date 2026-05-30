@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <optional>
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Vector2.hpp>
 
@@ -27,6 +28,12 @@ inline raylib::Vector2 snapToChunk(const Vector2 pos) {
 }
 
 bool lineRecCollision(raylib::Vector2 pos1, raylib::Vector2 pos2, raylib::Rectangle rec);
+std::optional<raylib::Vector2> linesCollisionPoint(raylib::Vector2 pos1, raylib::Vector2 pos2, raylib::Vector2 pos3, raylib::Vector2 pos4);
+
+struct Line {
+    raylib::Vector2 a;
+    raylib::Vector2 b;
+};
 
 // Integer position helper struct
 struct IPos {

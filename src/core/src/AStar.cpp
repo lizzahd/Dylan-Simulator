@@ -6,9 +6,9 @@
 #include <raylib-cpp/Rectangle.hpp>
 
 #include <AStar.h>
+#include <Actor.h>
 #include <Map.h>
 #include <Utils.h>
-#include <EntityManager.h>
 
 int getSquaredDistance(const IPos &first, const IPos &second) {
     const int xd2 = static_cast<int>(std::round(pow((first.x - second.x), 2)));

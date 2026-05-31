@@ -5,11 +5,11 @@
 
 #include <algorithm>
 
-#include "Interactable.h"
-#include "AssetManager.h"
-#include <EntityManager.h>
+#include "hot_assets/AssetManager.h"
 
+#include "Interactable.h"
 #include "Character.h"
+#include <Actor.h>
 
 #define INTERACTION_DIST 150
 

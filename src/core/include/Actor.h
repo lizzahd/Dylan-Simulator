@@ -7,7 +7,6 @@
 #include <iostream>
 #include <raylib-cpp.hpp>
 
-#include <IEntity.h>
 #include <Map.h>
 
 // This is for the entity manager, which always hands these to the entity upon creation,
@@ -31,6 +30,8 @@
                             m_camera, \
                             m_map
 
+#include <hot_entities/IEntity.hpp>
+#include <hot_entities/EntityManager.hpp>
 
 namespace raylib {
     class Rectangle;

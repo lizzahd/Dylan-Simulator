@@ -9,7 +9,7 @@
 #include <utility>
 #include <raylib-cpp/Vector2.hpp>
 
-#include "AssetManager.h"
+#include <hot_assets/AssetManager.h>
 
 class Animation {
 public:

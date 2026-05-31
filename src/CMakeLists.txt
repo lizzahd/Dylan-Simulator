@@ -3,10 +3,27 @@ project(TTRPG)
 
 set(CMAKE_CXX_STANDARD 23)
 
+include(FetchContent)
+
+FetchContent_Declare(
+        hot_assets
+        GIT_REPOSITORY https://github.com/lizzahd/Hot-Assets-Plus-Plus.git
+        GIT_TAG "main"
+)
+
+FetchContent_MakeAvailable(hot_assets)
+
+FetchContent_Declare(
+        hot_entities
+        GIT_REPOSITORY https://github.com/lizzahd/Hot-Entities-Plus-Plus.git
+        GIT_TAG "main"
+)
+
+FetchContent_MakeAvailable(hot_entities)
+
 add_executable(
         TTRPG Main.cpp
         core/src/Actor.cpp
-        core/src/AssetManager.cpp
         core/src/AStar.cpp
         environment/src/Map.cpp
         core/src/Utils.cpp
@@ -18,6 +35,14 @@ add_executable(
         core/include/Animation.h
         environment/src/Interactable.cpp
 )
+
+target_link_libraries(TTRPG PRIVATE hot_assets)
+
+target_compile_definitions(TTRPG PRIVATE
+    ENTITY_TYPES_HEADER=<EntityTypes.h>
+    ENTITY_MANAGER_EXTERNAL_HEADER=<EntityManagerExternal.h>
+)
+target_link_libraries(TTRPG PRIVATE hot_entities)
 
 find_path(RAYLIB_CPP_INCLUDE_DIRS "raylib-cpp.hpp")
 target_include_directories(TTRPG PRIVATE

@@ -1,11 +1,12 @@
 #include <raylib-cpp.hpp>
 
-#include <AssetManager.h>
+#include <hot_assets/AssetManager.h>
+
 #include <Utils.h>
-#include <EntityManager.h>
 #include <Map.h>
 #include <Player.h>
 #include <Interactable.h>
+#include <Actor.h>
 
 int main() {
     // Initialize raylib
@@ -18,7 +19,7 @@ int main() {
     InitAudioDevice();
 
     // Assets
-    const auto assetManager = std::make_shared<AssetManager>();
+    const auto assetManager = std::make_shared<AssetManager>("../..");
 
     // Rendering
     auto camera = std::make_shared<raylib::Camera2D>(

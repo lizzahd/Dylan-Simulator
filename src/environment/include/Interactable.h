@@ -5,15 +5,12 @@
 #pragma once
 
 #include <algorithm>
-#include <vector>
 #include <raylib-cpp/Vector2.hpp>
 #include <memory>
 #include <raylib-cpp/Color.hpp>
 #include <Actor.h>
 
-#include "AssetManager.h"
-
-class AssetManager;
+#include <hot_assets/AssetManager.h>
 
 class Interactable : public Actor {
 public:

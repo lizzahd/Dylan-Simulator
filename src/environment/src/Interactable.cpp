@@ -11,10 +11,10 @@
 #include "Character.h"
 #include <Actor.h>
 
-#define INTERACTION_DIST 150
-
 void Interactable::update() {
-
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && canInteract() && isHovered()) {
+        interact();
+    }
 }
 
 void Interactable::draw() const {
@@ -25,6 +25,10 @@ void Interactable::draw() const {
         0,
         getTint()
     );
+}
+
+void Interactable::interact() const {
+    m_callback(ENTITY_MEMBERS);
 }
 
 bool Interactable::canInteract() const {

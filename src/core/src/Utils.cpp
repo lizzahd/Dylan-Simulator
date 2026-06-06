@@ -25,3 +25,7 @@ std::optional<raylib::Vector2> linesCollisionPoint(const raylib::Vector2 pos1, c
 
     return std::nullopt;
 }
+
+bool isInteractKeyPressed() {
+    return IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+}

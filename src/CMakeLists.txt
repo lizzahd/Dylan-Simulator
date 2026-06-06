@@ -34,6 +34,14 @@ add_executable(
         core/src/Animation.cpp
         core/include/Animation.h
         environment/src/Interactable.cpp
+        core/src/StyledText.cpp
+        core/include/StyledText.h
+        core/src/GameManager.cpp
+        core/include/GameManager.h
+        characters/src/Npc.cpp
+        characters/include/Npc.h
+        core/src/Dialogue.cpp
+        core/include/Dialogue.h
 )
 
 target_link_libraries(TTRPG PRIVATE hot_assets)

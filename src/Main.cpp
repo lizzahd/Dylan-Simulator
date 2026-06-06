@@ -7,6 +7,9 @@
 #include <Player.h>
 #include <Interactable.h>
 #include <Actor.h>
+#include <GameManager.h>
+
+#include "Npc.h"
 
 int main() {
     // Initialize raylib
@@ -30,34 +33,37 @@ int main() {
     // Map
     auto map = std::make_shared<Map>("../../assets/rooms/house");
 
+    // Game State Management
+    auto gameManager = std::make_shared<GameManager>();
+
     // Entity management
-    const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map);
+    const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);
     entityManager->registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
 
-    const auto player = entityManager->create<Player>(raylib::Vector2{200, 200});
+    const auto player = entityManager->create<Player>(raylib::Vector2{300, 500});
+
+    entityManager->create<Npc>(EntityType::Npc, std::vector{
+        Animation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+    }, raylib::Vector2{500, 550}, raylib::Vector2{140, 140});
 
     // Window
     std::string path = "window";
-    entityManager->create<Interactable>(path, raylib::Vector2{259, 351});
+    entityManager->create<Interactable>(path, raylib::Vector2{259, 351}, [](ENTITY_REQUIREMENTS) {
+        gameManager->showDialogue({gameManager, "You see a man in there who is totally [w]naked[r]", 1});
+    });
 
     // Service Panel
     path = "service_panel";
-    entityManager->create<Interactable>(path, raylib::Vector2{482, 356});
-
-    // Loop through entityManager
-    // Characters
-    entityManager->execByType<Character>([&](int, const auto &entity) {
-        __nop();
-    });
-
-    // Interactables
-    entityManager->execByType<Interactable>([&](int, const auto &entity) {
-        __nop();
-    });
-
-    // Actors
-    entityManager->execByType<Actor>([&](int, const auto &entity) {
-        __nop();
+    entityManager->create<Interactable>(path, raylib::Vector2{482, 356}, [](ENTITY_REQUIREMENTS) {
+        DialogueText dialogue{gameManager, "Careful, you might get your ass [cFF0000FF]zapped to hell[r]", 1};
+        dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Leave it alone", [](auto g) {
+            g->closeDialogue();
+        }));
+        dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Zap your ass to hell", [](auto g) {
+            std::cout << "ZAP ZAP NIGGA\n";
+            g->closeDialogue();
+        }));
+        gameManager->showDialogue(dialogue);
     });
 
     while (!window.ShouldClose()) {
@@ -82,7 +88,10 @@ int main() {
         raylib::Vector2().DrawCircle(2, RED);
 
         // Update entities and stuff
-        entityManager->updateAll();
+        if (!gameManager->m_paused) {
+            entityManager->updateAll();
+        }
+        entityManager->drawAll();
 
         map->drawForegroundLayers();
 
@@ -90,6 +99,9 @@ int main() {
         if (inDebugMode) {
             DrawText(std::format("Angle Index: {}", player->getAngleIndex()).c_str(), 0, 0, 14, LIME);
         }
+
+        gameManager->update();
+        gameManager->draw();
 
         window.EndDrawing();
     }

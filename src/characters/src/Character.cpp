@@ -5,6 +5,8 @@
 #include <Character.h>
 #include <Utils.h>
 
+#include "GameManager.h"
+
 void Character::update() {
     // Check which geometry we're in
     const auto delta = m_pos + m_vel;
@@ -35,12 +37,16 @@ void Character::update() {
 }
 
 void Character::draw() const {
-    // // getCenter().DrawCircle(32, WHITE);
-    // m_assetManager->getTex(m_sheetTex).Draw(
-    //     raylib::Rectangle{0, getAngleIndex() * m_size.y, m_size.x, m_size.y},
-    //     raylib::Rectangle{m_pos, m_size},
-    //     m_drawOrigin
-    // );
+    if (isHovered()) {
+        Color color;
+        if (canInteract()) {
+            color = GRAY;
+        } else {
+            color = WHITE;
+        }
+        m_animationBank[m_animationIndex].drawOutline(m_pos, getAngleIndex(), color);
+    }
+
     m_animationBank[m_animationIndex].draw(m_pos, getAngleIndex());
 }
 
@@ -52,6 +58,44 @@ void Character::drawDebug() const {
 void Character::switchAnimation(const int animationIndex) {
     m_animationBank[m_animationIndex].reset();
     m_animationIndex = animationIndex;
+}
+
+void Character::setAngle(const float angle) {
+    float degrees = angle * (180.0f / PI);
+    if (degrees < 0) {
+        degrees += 360.0f;
+    }
+
+    const int directionIndex = static_cast<int>((degrees + 22.5f) / 45.0f) % 8;
+    // Scale angle to 0-8
+    switch (directionIndex) {
+        case 0:
+            m_direction = Direction::Right;
+            break;
+        case 1:
+            m_direction = Direction::DownRight;
+            break;
+        case 2:
+            m_direction = Direction::Down;
+            break;
+        case 3:
+            m_direction = Direction::DownLeft;
+            break;
+        case 4:
+            m_direction = Direction::Left;
+            break;
+        case 5:
+            m_direction = Direction::UpLeft;
+            break;
+        case 6:
+            m_direction = Direction::Up;
+            break;
+        case 7:
+            m_direction = Direction::UpRight;
+            break;
+        default:
+            break;
+    }
 }
 
 float Character::getAngleIndex() const {
@@ -121,4 +165,16 @@ raylib::Vector2 Character::getVector() const {
     }
 
     return {};
+}
+
+void Character::interact() const {
+    m_callback(ENTITY_MEMBERS);
+}
+
+bool Character::canInteract() const {
+    return true; // TODO
+}
+
+bool Character::isHovered() const {
+    return getRect().CheckCollision(GetMousePosition());
 }

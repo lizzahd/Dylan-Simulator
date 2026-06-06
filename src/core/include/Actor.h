@@ -8,27 +8,25 @@
 #include <raylib-cpp.hpp>
 
 #include <Map.h>
+#include <EntityManagerExternal.h>
 
 // This is for the entity manager, which always hands these to the entity upon creation,
 // so we don't need to worry about it.
 // The macro just makes this easier to deal with
 #define ENTITY_REQUIREMENTS const int id, \
                             const std::shared_ptr<EntityManager>& entityManager, \
-                            const std::shared_ptr<AssetManager>& assetManager, \
-                            const std::shared_ptr<Camera2D>& camera, \
-                            const std::shared_ptr<Map>& map
+                            ENTITY_MANAGER_REQUIREMENTS
 
 #define ENTITY_PARAMETERS   id, \
                             entityManager, \
                             assetManager, \
                             camera, \
-                            map
+                            map, \
+                            gameManager
 
 #define ENTITY_MEMBERS      m_id, \
                             m_entityManager, \
-                            m_assetManager, \
-                            m_camera, \
-                            m_map
+                            ENTITY_MANAGER_MEMBERS
 
 #include <hot_entities/IEntity.hpp>
 #include <hot_entities/EntityManager.hpp>
@@ -58,6 +56,7 @@ public:
         , m_assetManager(assetManager)
         , m_camera(camera)
         , m_map(map)
+        , m_gameManager(gameManager)
     {}
 
     ~Actor() override = default;
@@ -121,5 +120,6 @@ protected:
     std::shared_ptr<AssetManager> m_assetManager;
     std::shared_ptr<Camera2D> m_camera;
     std::shared_ptr<Map> m_map;
+    std::shared_ptr<GameManager> m_gameManager;
     int m_layer = 1;
 };

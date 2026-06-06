@@ -70,3 +70,6 @@ constexpr IPos ADJACENT_8[8] = {
     {0, -1},    // Top
     {1, -1},    // Top-Right
 };
+
+// TODO: Make this more dynamic with mappable keys
+bool isInteractKeyPressed();

@@ -11,6 +11,12 @@
 
 #include <hot_assets/AssetManager.h>
 
+enum ANIMATION_DRAW_FLAGS {
+    ANIMATION_DRAW_FLAG_NONE = 0,
+    ANIMATION_DRAW_FLAG_SHADOW,
+    ANIMATION_DRAW_FLAG_OUTLINE,
+};
+
 class Animation {
 public:
     ~Animation() = default;
@@ -34,8 +40,10 @@ public:
     void update();
     void draw(raylib::Vector2 pos, float ySrcOffset) const;
     void draw(raylib::Vector2 pos) const;
+    void drawOutline(raylib::Vector2 pos, float ySrcOffset, Color color) const;
     void reset();
     void play();
+    [[nodiscard]] raylib::Rectangle getSourceRect(float ySrcOffset) const;
 
     int m_currentFrame = 0;
     int m_currentFrameTickDelay = 0;

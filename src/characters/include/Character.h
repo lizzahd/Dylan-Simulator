@@ -5,6 +5,7 @@
 
 #include <Actor.h>
 #include "Animation.h"
+#include "Interactable.h"
 
 #define FALLING_VELOCITY 3
 
@@ -37,9 +38,15 @@ public:
     void drawDebug() const override;
     void switchAnimation(int animationIndex);
 
+    void setAngle(float angle);
     [[nodiscard]] float getAngleIndex() const;
     [[nodiscard]] float getAngle() const;
     [[nodiscard]] raylib::Vector2 getVector() const;
+
+    // Interactability
+    void interact() const;
+    [[nodiscard]] bool canInteract() const;
+    [[nodiscard]] bool isHovered() const;
 
     raylib::Vector2 m_vel;
     int m_animationIndex = 0;
@@ -47,4 +54,5 @@ public:
     float m_fallingVel = 0;
 
     std::vector<Animation> m_animationBank;
+    InteractableCallback m_callback;
 };

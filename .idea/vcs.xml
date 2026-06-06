@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/cmake-build-debug/_deps/hot_assets-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/src/cmake-build-debug/_deps/hot_entities-src" vcs="Git" />
   </component>
 </project>

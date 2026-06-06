@@ -37,17 +37,8 @@ void Character::update() {
 }
 
 void Character::draw() const {
-    if (isHovered()) {
-        Color color;
-        if (canInteract()) {
-            color = GRAY;
-        } else {
-            color = WHITE;
-        }
-        m_animationBank[m_animationIndex].drawOutline(m_pos, getAngleIndex(), color);
-    }
-
-    m_animationBank[m_animationIndex].draw(m_pos, getAngleIndex());
+    const auto &animation = m_animationBank[m_animationIndex];
+    animation.draw(m_pos, getAngleIndex());
 }
 
 void Character::drawDebug() const {

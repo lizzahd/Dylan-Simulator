@@ -12,14 +12,27 @@ class Npc : public Character {
 public:
     explicit Npc(
         ENTITY_REQUIREMENTS,
-        const EntityType entityType,
         const std::vector<Animation> &animationBank,
         const raylib::Vector2 pos,
         const raylib::Vector2 size)
         : Character(
-            ENTITY_PARAMETERS, entityType, animationBank, pos, size) {
+            ENTITY_PARAMETERS, EntityType::Npc, animationBank, pos, size) {
         m_animationBank[m_animationIndex].m_playing = true;
     }
 
     void update() override;
+};
+
+class Dubi : public Npc {
+public:
+    Dubi(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
+    : Npc(ENTITY_PARAMETERS, std::vector{
+            Animation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+        }, pos, {140, 140})
+    {}
+
+    [[nodiscard]] raylib::Rectangle getRect() const override {
+        const auto &anim = m_animationBank[m_animationIndex];
+        return raylib::Rectangle{m_pos.x + 48 - anim.m_origin.x, m_pos.y + 41 - anim.m_origin.y, 48, 80};
+    }
 };

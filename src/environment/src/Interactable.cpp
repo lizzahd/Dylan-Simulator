@@ -18,6 +18,27 @@ void Interactable::update() {
 }
 
 void Interactable::draw() const {
+    const bool hasOutline = isHovered();
+    if (hasOutline) {
+        float outlineColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+        if (!canInteract()) {
+            outlineColor[0] = 0.5f;
+            outlineColor[1] = 0.5f;
+            outlineColor[2] = 0.5f;
+        }
+        auto &shader = m_assetManager->getShader("outline");
+        const int outlineSizeLoc = shader.GetLocation("outlineSize");
+        const int outlineColorLoc = shader.GetLocation("outlineColor");
+        const int textureSizeLoc = shader.GetLocation("textureSize");
+        constexpr float outlineSize = 1.0f;
+        shader.SetValue(outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
+        shader.SetValue(outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
+        const float textureSize[2] = { m_size.x, m_size.y };
+        shader.SetValue(textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+
+        BeginShaderMode(shader);
+    }
+
     m_assetManager->getTex(m_tex).Draw(
         raylib::Rectangle{0, 0, m_size.x, m_size.y},
         raylib::Rectangle{m_pos, m_size},
@@ -25,6 +46,10 @@ void Interactable::draw() const {
         0,
         getTint()
     );
+
+    if (hasOutline) {
+        EndShaderMode();
+    }
 }
 
 void Interactable::interact() const {

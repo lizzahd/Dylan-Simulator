@@ -42,25 +42,22 @@ int main() {
 
     const auto player = entityManager->create<Player>(raylib::Vector2{300, 500});
 
-    entityManager->create<Npc>(EntityType::Npc, std::vector{
-        Animation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
-    }, raylib::Vector2{500, 550}, raylib::Vector2{140, 140});
+    entityManager->create<Dubi>(raylib::Vector2{500, 550});
 
     // Window
     std::string path = "window";
-    entityManager->create<Interactable>(path, raylib::Vector2{259, 351}, [](ENTITY_REQUIREMENTS) {
+    entityManager->create<Interactable>(path, raylib::Vector2{257, 349}, [](ENTITY_REQUIREMENTS) {
         gameManager->showDialogue({gameManager, "You see a man in there who is totally [w]naked[r]", 1});
     });
 
     // Service Panel
     path = "service_panel";
-    entityManager->create<Interactable>(path, raylib::Vector2{482, 356}, [](ENTITY_REQUIREMENTS) {
+    entityManager->create<Interactable>(path, raylib::Vector2{480, 354}, [](ENTITY_REQUIREMENTS) {
         DialogueText dialogue{gameManager, "Careful, you might get your ass [cFF0000FF]zapped to hell[r]", 1};
         dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Leave it alone", [](auto g) {
             g->closeDialogue();
         }));
         dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Zap your ass to hell", [](auto g) {
-            std::cout << "ZAP ZAP NIGGA\n";
             g->closeDialogue();
         }));
         gameManager->showDialogue(dialogue);

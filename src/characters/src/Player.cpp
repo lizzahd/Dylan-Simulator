@@ -9,6 +9,10 @@
 void Player::update() {
     Character::update();
 
+    if (const auto &transition = m_map->getTransitions(m_pos); transition.has_value()) {
+        m_map->transition(transition.value(), this);
+    }
+
     moveDirection();
 }
 

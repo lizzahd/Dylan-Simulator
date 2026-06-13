@@ -27,16 +27,16 @@ void Animation::update() {
 
 void Animation::draw(const raylib::Vector2 pos, const float ySrcOffset) const {
     const raylib::Rectangle src{static_cast<float>(m_currentFrame) * m_size.x, ySrcOffset * m_size.y, m_size.x, m_size.y};
-    const raylib::Rectangle dst{pos, m_size};
+    const raylib::Rectangle dst{{std::round(pos.x), std::round(pos.y)}, {m_size.x, m_size.y}};
 
-    // It's shadow time
-    m_assetManager->getTex(m_tex).Draw(
-        src,
-        raylib::Rectangle{pos.x, pos.y, m_size.x, m_size.y},
-        m_origin,
-        -60,
-        raylib::Color{0, 0, 0, 155}
-    );
+    // // It's shadow time
+    // m_assetManager->getTex(m_tex).Draw(
+    //     src,
+    //     raylib::Rectangle{pos.x, pos.y, m_size.x, m_size.y},
+    //     m_origin,
+    //     -60,
+    //     raylib::Color{0, 0, 0, 155}
+    // );
 
     m_assetManager->getTex(m_tex).Draw(
         src,

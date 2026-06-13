@@ -8,6 +8,9 @@
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Vector2.hpp>
 
+#define VIEWPORT_WIDTH  640
+#define VIEWPORT_HEIGHT 480
+
 #define PI_Q (PI / 4)
 #define PI_H (PI / 2)
 #define PI_2 (PI * 2)

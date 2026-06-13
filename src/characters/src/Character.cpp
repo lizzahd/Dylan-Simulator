@@ -11,7 +11,7 @@ void Character::update() {
     // Check which geometry we're in
     const auto delta = m_pos + m_vel;
     m_fallingVel = FALLING_VELOCITY;
-    for (const auto &g : m_map->m_geometries) {
+    for (const auto &g : m_map->getGeometries()) {
         if (CheckCollisionPointPoly(m_pos, g.m_vertices.data(), g.m_vertices.size())) {
             // This is the one
             m_fallingVel = 0;
@@ -32,7 +32,8 @@ void Character::update() {
     } else {
         m_animationBank[m_animationIndex].update();
         m_pos += m_vel;
-        m_vel /= 1.15;
+        // m_vel /= 1.15;
+        m_vel /= 1.5;
     }
 }
 

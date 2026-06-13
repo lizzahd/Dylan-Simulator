@@ -11,6 +11,10 @@
 #include <Map.h>
 #include <Utils.h>
 
+#include "Player.h"
+
+#define ROOMS_PATH "../../assets/rooms/"
+
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
@@ -22,9 +26,9 @@ void Geometry::drawDebug() const {
     }
 }
 
-Map::Map(const std::string& roomPath) {
+Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad) {
     // Background Textures
-    for (const auto& entry : fs::directory_iterator(roomPath)) {
+    for (const auto& entry : fs::directory_iterator(ROOMS_PATH + roomName)) {
         fs::path path = entry.path();
         if (path.extension() != ".png") {
             continue;
@@ -51,8 +55,27 @@ Map::Map(const std::string& roomPath) {
     }
 
     // Load geometry
-    std::ifstream f(roomPath + "/geometry.json");
-    for (const auto &g : json::parse(f)) {
+    std::ifstream f(ROOMS_PATH + roomName + "/geometry.json");
+    const auto &j = json::parse(f);
+
+    const auto &transitions = j["transitions"];
+    for (const auto &transition : transitions) {
+        const auto &transitionPoints = transition["points"];
+        std::vector<raylib::Vector2> rTransitionPoints;
+        for (const auto &p : transitionPoints) {
+            rTransitionPoints.emplace_back(p["x"], p["y"]);
+        }
+
+        m_transitions.emplace(transition["name"], Geometry{rTransitionPoints});
+        roomsToLoad.emplace(transition["name"]);
+    }
+
+    const auto &entrances = j["entrances"];
+    for (const auto &entrance : entrances) {
+        m_entrances.emplace(entrance["name"], raylib::Vector2{entrance["x"], entrance["y"]});
+    }
+
+    for (const auto &g : j["areas"]) {
         const auto &points = g["points"];
         std::vector<raylib::Vector2> rPoints;
         for (const auto &p : points) {
@@ -71,19 +94,19 @@ Map::Map(const std::string& roomPath) {
     }
 }
 
-void Map::drawBackgroundLayers() const {
+void Room::drawBackgroundLayers() const {
     for (const auto &layer : m_backgroundLayers) {
         layer.Draw();
     }
 }
 
-void Map::drawForegroundLayers() const {
+void Room::drawForegroundLayers() const {
     for (const auto &layer : m_foregroundLayers) {
         layer.Draw();
     }
 }
 
-void Map::drawDebug() const {
+void Room::drawDebug() const {
     for (const auto &geometry : m_geometries) {
         geometry.drawDebug();
     }
@@ -91,4 +114,48 @@ void Map::drawDebug() const {
     for (const auto hitbox : m_hitboxes) {
         hitbox.DrawLines(RED);
     }
+}
+
+std::optional<std::string> Room::getTransitions(const raylib::Vector2 pos) const {
+    for (const auto &[roomName, t] : m_transitions) {
+        if (CheckCollisionPointPoly(pos, t.m_vertices.data(), t.m_vertices.size())) {
+            return roomName;
+        }
+    }
+
+    return std::nullopt;
+}
+
+Map::Map(std::string startRoomName) : m_currentRoom(startRoomName) {
+    std::set roomsToLoad{startRoomName};
+    for (const auto &roomName : roomsToLoad) {
+        m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad));
+    }
+}
+
+void Map::drawBackgroundLayers() const {
+    m_rooms.at(m_currentRoom)->drawBackgroundLayers();
+}
+
+void Map::drawForegroundLayers() const {
+    m_rooms.at(m_currentRoom)->drawForegroundLayers();
+}
+
+void Map::drawDebug() const {
+    m_rooms.at(m_currentRoom)->drawDebug();
+}
+
+void Map::transition(const std::string &room, Player *player) {
+    player->m_vel = 0;
+    player->m_direction = Direction::Down;
+    player->m_pos = m_rooms.at(room)->m_entrances[m_currentRoom];
+    m_currentRoom = room;
+}
+
+std::vector<Geometry> &Map::getGeometries() const {
+    return m_rooms.at(m_currentRoom)->m_geometries;
+}
+
+std::optional<std::string> Map::getTransitions(const raylib::Vector2 pos) const {
+    return m_rooms.at(m_currentRoom)->getTransitions(pos);
 }

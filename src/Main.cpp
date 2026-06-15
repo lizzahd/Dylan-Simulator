@@ -35,6 +35,7 @@ int main() {
 
     // Game State Management
     auto gameManager = std::make_shared<GameManager>();
+    gameManager->load();
 
     // Entity management
     const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);

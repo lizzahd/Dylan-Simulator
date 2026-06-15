@@ -8,6 +8,12 @@
 #include "GameManager.h"
 
 void Character::update() {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (isHovered() && canInteract()) {
+            m_gameManager->showDialogue(getDialogue());
+        }
+    }
+
     // Check which geometry we're in
     const auto delta = m_pos + m_vel;
     m_fallingVel = FALLING_VELOCITY;

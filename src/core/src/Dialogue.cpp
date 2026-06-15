@@ -13,6 +13,31 @@ void DialogueNode::draw(const raylib::Vector2 pos) const {
     drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 20, 2, WHITE, 0);
 }
 
+DialogueText DialogueText::fromJson(const std::shared_ptr<GameManager> &gameManager, const nlohmann::json &dialogue, const DialogueTextId offset) {
+    DialogueText dialogueText(gameManager, dialogue["text"]);
+    for (const auto &option : dialogue["options"]) {
+        int nextId = option["nextId"];
+        if (nextId != -1) {
+            nextId += offset;
+        }
+        dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], nextId, [](const auto&) {}); // TODO: Callback
+    }
+
+    if (dialogue.contains("nextId")) {
+        int nextId = dialogue["nextId"];
+        if (nextId != -1) {
+            nextId += offset;
+        }
+        dialogueText.m_nextTextId = nextId;
+    }
+
+    if (dialogue.contains("textDelay")) {
+        dialogueText.m_maxDelay = dialogue["textDelay"];
+    }
+
+    return dialogueText;
+}
+
 void DialogueText::update() {
     if (!isInitialized()) {
         m_initialDelay--;

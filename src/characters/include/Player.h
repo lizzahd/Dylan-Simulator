@@ -34,4 +34,8 @@ public:
         const auto &anim = m_animationBank[m_animationIndex];
         return raylib::Rectangle{m_pos.x + 48 - anim.m_origin.x, m_pos.y + 9 - anim.m_origin.y, 48, 112};
     }
+
+    DialogueTextId getDialogue() const override {
+        return 0;
+    }
 };

@@ -4,11 +4,26 @@
 
 #include <GameManager.h>
 
+#include <fstream>
+#include <iostream>
 #include <raylib.h>
 #include <raylib-cpp/Rectangle.hpp>
 
 #include <StyledText.h>
+#include <nlohmann/json.hpp>
+
 #include "Utils.h"
+
+using json = nlohmann::json;
+
+void GameManager::load() {
+    // Load base.json
+    std::ifstream f("../../assets/base.json");
+    const auto &j = json::parse(f);
+    for (const auto &dialogue : j["dialogue"]) {
+        m_dialogueTextMap.emplace(dialogue[0]["id"], DialogueText::fromJson(shared_from_this(), dialogue[0]));
+    }
+}
 
 void GameManager::update() {
     if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
@@ -31,7 +46,11 @@ void GameManager::update() {
 
         if (isInteractKeyPressed()) {
             if (dialogueText.isInitialized() && dialogueText.isDone() && dialogueText.m_dialogueNodes.empty()) {
-                closeDialogue();
+                if (dialogueText.m_nextTextId.has_value()) {
+                    showDialogue(dialogueText.m_nextTextId.value());
+                } else {
+                    closeDialogue();
+                }
                 return;
             } else if (dialogueText.m_initialDelay <= TEXT_MAX_INITIAL_DELAY && dialogueText.isInitialized()) {
                 dialogueText.m_currentLength = dialogueText.m_text.length();

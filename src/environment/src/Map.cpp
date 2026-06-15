@@ -21,6 +21,8 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
+static DialogueTextId dialogueIdOffset = 10000;
+
 void Geometry::drawDebug() const {
     DrawLineStrip(m_vertices.data(), m_vertices.size(), BLUE);
 
@@ -98,16 +100,33 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, cons
 
     for (const auto &interactable : j["interactables"]) {
         std::string tex = interactable["tex"];
-        entityManager->create<Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), interactable["dialogueId"]);
+        entityManager->create<Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), static_cast<int>(interactable["dialogueId"]) + dialogueIdOffset);
     }
 
     for (const auto &dialogue : j["dialogue"]) {
-        DialogueText dialogueText(gameManager, dialogue["text"], 1);
-        for (const auto &option : dialogue["options"]) {
-            dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], option["nextId"], [](const auto&) {}); // TODO: Callback
-        }
-
-        gameManager->m_dialogueTextMap.emplace(dialogue["id"], dialogueText);
+        // DialogueText dialogueText(gameManager, dialogue["text"]);
+        // for (const auto &option : dialogue["options"]) {
+        //     int nextId = option["nextId"];
+        //     if (nextId != -1) {
+        //         nextId += dialogueId;
+        //     }
+        //     dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], nextId, [](const auto&) {}); // TODO: Callback
+        // }
+        //
+        // if (dialogue.contains("nextId")) {
+        //     int nextId = dialogue["nextId"];
+        //     if (nextId != -1) {
+        //         nextId += dialogueId;
+        //     }
+        //     dialogueText.m_nextTextId = nextId;
+        // }
+        //
+        // if (dialogue.contains("textDelay")) {
+        //     dialogueText.m_maxDelay = dialogue["textDelay"];
+        // }
+        //
+        // gameManager->m_dialogueTextMap.emplace(static_cast<int>(dialogue["id"]) + dialogueId, dialogueText);
+        gameManager->m_dialogueTextMap.emplace(static_cast<int>(dialogue["id"]) + dialogueIdOffset, DialogueText::fromJson(gameManager, dialogue, dialogueIdOffset));
     }
 }
 
@@ -166,6 +185,7 @@ void Map::load(const std::string &startRoomName, const std::shared_ptr<EntityMan
     std::set roomsToLoad{startRoomName};
     for (const auto &roomName : roomsToLoad) {
         m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad, entityManager, gameManager));
+        dialogueIdOffset += 1000; // Buffer between rooms
     }
     m_currentRoom = startRoomName;
 }

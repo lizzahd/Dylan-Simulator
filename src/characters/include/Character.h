@@ -47,6 +47,7 @@ public:
     void interact() const;
     [[nodiscard]] bool canInteract() const;
     [[nodiscard]] bool isHovered() const;
+    [[nodiscard]] virtual DialogueTextId getDialogue() const = 0;
 
     raylib::Vector2 m_vel;
     int m_animationIndex = 0;

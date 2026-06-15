@@ -6,11 +6,12 @@
 
 #include <Dialogue.h>
 
-class GameManager {
+class GameManager : public std::enable_shared_from_this<GameManager> {
 public:
     ~GameManager() = default;
     GameManager() = default;
 
+    void load();
     void update();
     void draw() const;
     void pause();

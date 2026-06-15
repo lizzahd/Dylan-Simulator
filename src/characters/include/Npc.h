@@ -6,8 +6,6 @@
 
 #include <Character.h>
 
-#define NPC_LOOKING_DISTANCE 100
-
 class Npc : public Character {
 public:
     explicit Npc(
@@ -34,5 +32,9 @@ public:
     [[nodiscard]] raylib::Rectangle getRect() const override {
         const auto &anim = m_animationBank[m_animationIndex];
         return raylib::Rectangle{m_pos.x + 48 - anim.m_origin.x, m_pos.y + 41 - anim.m_origin.y, 48, 80};
+    }
+
+    DialogueTextId getDialogue() const override {
+        return 100;
     }
 };

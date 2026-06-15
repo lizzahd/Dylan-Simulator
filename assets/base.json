@@ -1,0 +1,19 @@
+{
+  "dialogue": {
+    "player": [
+      {
+        "id": 0,
+        "text": "It's You.",
+        "options": []
+      }
+    ],
+    "dubi": [
+      {
+        "id": 100,
+        "text": "[w]Wazzup?[r]",
+        "options": [],
+        "textDelay": 3
+      }
+    ]
+  }
+}

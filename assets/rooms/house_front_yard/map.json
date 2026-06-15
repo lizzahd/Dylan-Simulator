@@ -329,7 +329,8 @@
     {
       "id": 0,
       "text": "You see a man in there who is totally [w]naked[r]",
-      "options": []
+      "options": [],
+      "nextId": 3
     },
     {
       "id": 1,
@@ -358,6 +359,18 @@
           "nextId": 2
         }
       ]
+    },
+    {
+      "id": 3,
+      "text": ". . .",
+      "options": [],
+      "nextId": 4,
+      "textDelay": 15
+    },
+    {
+      "id": 4,
+      "text": "Why are you still looking?",
+      "options": []
     }
   ]
 }

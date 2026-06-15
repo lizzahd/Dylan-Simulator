@@ -6,9 +6,11 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #define TEXT_MAX_INITIAL_DELAY 5
 
@@ -44,11 +46,11 @@ public:
 class DialogueText {
 public:
     ~DialogueText() = default;
-    DialogueText(const std::shared_ptr<GameManager> &gameManager, std::string text, const int maxDelay)
+    explicit DialogueText(const std::shared_ptr<GameManager> &gameManager, std::string text)
         : m_text(std::move(text))
-        , m_maxDelay(maxDelay)
         , m_gameManager(gameManager)
     {}
+    static DialogueText fromJson(const std::shared_ptr<GameManager> &gameManager, const nlohmann::json &dialogue, DialogueTextId offset = 0);
 
     void update();
     void draw(raylib::Vector2 pos) const;
@@ -61,13 +63,14 @@ public:
     void reset();
 
     std::string m_text;
-    int m_maxDelay;
+    int m_maxDelay = 1;
     int m_currentDelay = 0;
     int m_currentLength = 1;
     int m_initialDelay = 5;
 
     std::vector<DialogueNode> m_dialogueNodes;
     int m_dialogueNodeIndex = 0;
+    std::optional<DialogueTextId> m_nextTextId;
 
     std::shared_ptr<GameManager> m_gameManager;
 };

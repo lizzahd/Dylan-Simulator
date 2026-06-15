@@ -7,9 +7,12 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #define TEXT_MAX_INITIAL_DELAY 5
+
+#define DIALOGUE_TEXT_ID_CLOSE (-1)
 
 namespace raylib {
     class Vector2;
@@ -17,30 +20,25 @@ namespace raylib {
 
 class GameManager;
 
-using DialogOptionCallback = std::function<void(const std::shared_ptr<GameManager>&)>;
+using DialogueOptionCallback = std::function<void(const std::shared_ptr<GameManager>&)>;
+using DialogueTextId = int;
 
 class DialogueNode {
 public:
     ~DialogueNode() = default;
-    DialogueNode(const std::shared_ptr<GameManager> &gameManager, std::string text, const std::shared_ptr<DialogueNode> &parent, const DialogOptionCallback &callback)
-        : m_text(std::move(text))
-        , m_parent(parent)
+    explicit DialogueNode(const std::shared_ptr<GameManager> &gameManager, std::string text, const DialogueTextId nextTextId, DialogueOptionCallback callback)
+        : m_nextTextId(nextTextId)
+        , m_text(std::move(text))
         , m_gameManager(gameManager)
-        , m_callback(callback)
-    {}
-    explicit DialogueNode(const std::shared_ptr<GameManager> &gameManager, std::string text, const DialogOptionCallback &callback)
-        : m_text(std::move(text))
-        , m_gameManager(gameManager)
-        , m_callback(callback)
+        , m_callback(std::move(callback))
     {}
 
     void draw(raylib::Vector2 pos) const;
 
+    DialogueTextId m_nextTextId;
     std::string m_text;
-    std::vector<std::shared_ptr<DialogueNode>> m_children;
-    std::weak_ptr<DialogueNode> m_parent;
     std::shared_ptr<GameManager> m_gameManager;
-    DialogOptionCallback m_callback;
+    DialogueOptionCallback m_callback;
 };
 
 class DialogueText {
@@ -60,6 +58,7 @@ public:
     }
     void changeIndex(int change);
     void select();
+    void reset();
 
     std::string m_text;
     int m_maxDelay;
@@ -67,9 +66,8 @@ public:
     int m_currentLength = 1;
     int m_initialDelay = 5;
 
-    std::vector<std::shared_ptr<DialogueNode>> m_dialogueNodes;
+    std::vector<DialogueNode> m_dialogueNodes;
     int m_dialogueNodeIndex = 0;
-    std::vector<int> m_path; // Path through recursive nodes
 
     std::shared_ptr<GameManager> m_gameManager;
 };

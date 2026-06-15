@@ -1,14 +1,14 @@
 {
   "entrances": [
     {
-      "name": "house_front_yard",
+      "name": "house_inverted_yard",
       "x": 325,
       "y": 647
     }
   ],
   "transitions": [
     {
-      "name": "house_front_yard",
+      "name": "house_inverted_yard",
       "points": [
         {
           "x": 326,
@@ -307,6 +307,55 @@
         {
           "x": 244,
           "y": 428
+        }
+      ]
+    }
+  ],
+  "interactables": [
+    {
+      "tex": "window",
+      "x": 257,
+      "y": 349,
+      "dialogueId": 0
+    },
+    {
+      "tex": "service_panel",
+      "x": 480,
+      "y": 354,
+      "dialogueId": 1
+    }
+  ],
+  "dialogue": [
+    {
+      "id": 0,
+      "text": "You see a man in there who is totally [w]naked[r]",
+      "options": []
+    },
+    {
+      "id": 1,
+      "text": "Careful, you might get your ass [cFF0000FF]zapped to hell[r]",
+      "options": [
+        {
+          "text": "Leave it alone",
+          "nextId": -1
+        },
+        {
+          "text": "Zap your ass to hell",
+          "nextId": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "text": "Ow, arc flash, oh no it [w]hurts[r]",
+      "options": [
+        {
+          "text": "Learn your lesson and leave it alone",
+          "nextId": -1
+        },
+        {
+          "text": "Do it again",
+          "nextId": 2
         }
       ]
     }

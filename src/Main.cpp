@@ -31,7 +31,7 @@ int main() {
     );
 
     // Map
-    auto map = std::make_shared<Map>("lake");
+    auto map = std::make_shared<Map>();
 
     // Game State Management
     auto gameManager = std::make_shared<GameManager>();
@@ -39,29 +39,13 @@ int main() {
     // Entity management
     const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);
     entityManager->registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
+    entityManager->registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
+
+    map->load("house_front_yard", entityManager, gameManager);
 
     const auto player = entityManager->create<Player>(raylib::Vector2{300, 500});
 
-    // entityManager->create<Dubi>(raylib::Vector2{200, 550});
-
-    // // Window
-    // std::string path = "window";
-    // entityManager->create<Interactable>(path, raylib::Vector2{257, 349}, [](ENTITY_REQUIREMENTS) {
-    //     gameManager->showDialogue({gameManager, "You see a man in there who is totally [w]naked[r]", 1});
-    // });
-    //
-    // // Service Panel
-    // path = "service_panel";
-    // entityManager->create<Interactable>(path, raylib::Vector2{480, 354}, [](ENTITY_REQUIREMENTS) {
-    //     DialogueText dialogue{gameManager, "Careful, you might get your ass [cFF0000FF]zapped to hell[r]", 1};
-    //     dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Leave it alone", [](auto g) {
-    //         g->closeDialogue();
-    //     }));
-    //     dialogue.m_dialogueNodes.push_back(std::make_shared<DialogueNode>(gameManager, "Zap your ass to hell", [](auto g) {
-    //         g->closeDialogue();
-    //     }));
-    //     gameManager->showDialogue(dialogue);
-    // });
+    entityManager->create<Dubi>(raylib::Vector2{200, 550});
 
     raylib::RenderTexture viewport = LoadRenderTexture(1000, 1000);
     raylib::Vector2 viewportPos;
@@ -72,8 +56,8 @@ int main() {
 
         window.ClearBackground(BLACK); // NOLINT
 
-        BeginTextureMode(viewport);
-        ClearBackground(BLACK); // NOLINT
+        // BeginTextureMode(viewport);
+        // ClearBackground(BLACK); // NOLINT
 
         // Control
         const raylib::Vector2 mousePos = camera->GetScreenToWorld(GetMousePosition());
@@ -123,21 +107,21 @@ int main() {
         gameManager->update();
         gameManager->draw();
 
-        EndTextureMode();
+        // EndTextureMode();
 
-        const float heightRatio = std::min(static_cast<float>(GetScreenHeight()) / VIEWPORT_HEIGHT, static_cast<float>(GetScreenHeight()));
-        const float newWidth = VIEWPORT_WIDTH * heightRatio;
-        const float newHeight = VIEWPORT_HEIGHT * heightRatio;
-        const float imageX = GetScreenWidth() / 2 - newWidth / 2;
-        DrawTexturePro(
-            viewport.texture,
-            raylib::Rectangle{viewportPos.x, viewportPos.y, VIEWPORT_WIDTH, -VIEWPORT_HEIGHT},
-            raylib::Rectangle{0, 0, newWidth, static_cast<float>(GetScreenHeight())},
-            {0, 0},
-            0,
-            WHITE
-        );
-        DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
+        // const float heightRatio = std::min(static_cast<float>(GetScreenHeight()) / VIEWPORT_HEIGHT, static_cast<float>(GetScreenHeight()));
+        // const float newWidth = VIEWPORT_WIDTH * heightRatio;
+        // const float newHeight = VIEWPORT_HEIGHT * heightRatio;
+        // const float imageX = GetScreenWidth() / 2 - newWidth / 2;
+        // DrawTexturePro(
+        //     viewport.texture,
+        //     raylib::Rectangle{viewportPos.x, viewportPos.y, VIEWPORT_WIDTH, -VIEWPORT_HEIGHT},
+        //     raylib::Rectangle{0, 0, newWidth, static_cast<float>(GetScreenHeight())},
+        //     {0, 0},
+        //     0,
+        //     WHITE
+        // );
+        // DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
 
         DrawFPS(5, 5);
 

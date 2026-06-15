@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <optional>
-
 #include <Dialogue.h>
 
 class GameManager {
@@ -17,10 +15,11 @@ public:
     void draw() const;
     void pause();
     void unpause();
-    void showDialogue(const DialogueText &dialogueText);
+    void showDialogue(DialogueTextId dialogueTextId);
     void closeDialogue();
 
     bool m_paused = false;
     double m_time = 0.0;
-    std::optional<DialogueText> m_dialogueText;
+    std::unordered_map<DialogueTextId, DialogueText> m_dialogueTextMap;
+    DialogueTextId m_dialogueTextId = DIALOGUE_TEXT_ID_CLOSE;
 };

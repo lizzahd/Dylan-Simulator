@@ -39,7 +39,25 @@ void Character::update() {
 
 void Character::draw() const {
     const auto &animation = m_animationBank[m_animationIndex];
-    animation.draw(m_pos, getAngleIndex());
+    int flags = ANIMATION_DRAW_FLAG_NONE;
+    AnimationEffectParams effectParams;
+    if (isHovered()) {
+        flags |= ANIMATION_DRAW_FLAG_OUTLINE;
+
+        effectParams.outlineThickness = 1.0f;
+        if (canInteract()) {
+            effectParams.outlineColor[0] = 1.0f;
+            effectParams.outlineColor[1] = 1.0f;
+            effectParams.outlineColor[2] = 1.0f;
+            effectParams.outlineColor[3] = 1.0f;
+        } else {
+            effectParams.outlineColor[0] = 0.5f;
+            effectParams.outlineColor[1] = 0.5f;
+            effectParams.outlineColor[2] = 0.5f;
+            effectParams.outlineColor[3] = 1.0f;
+        }
+    }
+    animation.draw(m_pos, getAngleIndex(), flags, effectParams);
 }
 
 void Character::drawDebug() const {

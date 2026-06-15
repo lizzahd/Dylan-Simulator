@@ -10,8 +10,11 @@
 #include <unordered_map>
 #include <optional>
 #include <set>
+#include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Texture.hpp>
 
+class GameManager;
+class EntityManager;
 class Player;
 struct Line;
 
@@ -25,7 +28,7 @@ struct Geometry {
 struct Room {
     ~Room() = default;
     Room() = default;
-    explicit Room(const std::string &roomName, std::set<std::string> &roomsToLoad);
+    explicit Room(const std::string &roomName, std::set<std::string> &roomsToLoad, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager);
 
     void drawBackgroundLayers() const;
     void drawForegroundLayers() const;
@@ -51,12 +54,12 @@ class Map {
 public:
     ~Map() = default;
     Map() = default;
-    explicit Map(std::string startRoomName);
 
     void drawBackgroundLayers() const;
     void drawForegroundLayers() const;
     void drawDebug() const;
     void transition(const std::string &room, Player *player);
+    void load(const std::string &startRoomName, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager);
     [[nodiscard]] std::vector<Geometry> &getGeometries() const;
     [[nodiscard]] std::optional<std::string> getTransitions(raylib::Vector2 pos) const;
 

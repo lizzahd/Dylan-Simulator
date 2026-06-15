@@ -11,28 +11,30 @@
 #include "Utils.h"
 
 void GameManager::update() {
-    if (m_dialogueText.has_value()) {
-        m_dialogueText->update();
-        if (isInteractKeyPressed()) {
-            if (m_dialogueText->isInitialized() && m_dialogueText->isDone() && m_dialogueText->m_dialogueNodes.empty()) {
-                unpause();
-                m_dialogueText.reset();
+    if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
+        DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
+        dialogueText.update();
+
+        // Dialogue option navigation
+        if (dialogueText.isDone() && !dialogueText.m_dialogueNodes.empty() && dialogueText.isInitialized()) {
+            if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
+                dialogueText.changeIndex(-1);
+            }
+            if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
+                dialogueText.changeIndex(1);
+            }
+            if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER)) {
+                dialogueText.select();
                 return;
-            } else if (m_dialogueText->m_initialDelay <= TEXT_MAX_INITIAL_DELAY && m_dialogueText->isInitialized()) {
-                m_dialogueText->m_currentLength = m_dialogueText->m_text.length();
             }
         }
 
-        // Dialogue option navigation
-        if (m_dialogueText->isDone() && !m_dialogueText->m_dialogueNodes.empty()) {
-            if (IsKeyPressed(KEY_UP)) {
-                m_dialogueText->changeIndex(-1);
-            }
-            if (IsKeyPressed(KEY_DOWN)) {
-                m_dialogueText->changeIndex(1);
-            }
-            if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER)) {
-                m_dialogueText->select();
+        if (isInteractKeyPressed()) {
+            if (dialogueText.isInitialized() && dialogueText.isDone() && dialogueText.m_dialogueNodes.empty()) {
+                closeDialogue();
+                return;
+            } else if (dialogueText.m_initialDelay <= TEXT_MAX_INITIAL_DELAY && dialogueText.isInitialized()) {
+                dialogueText.m_currentLength = dialogueText.m_text.length();
             }
         }
     }
@@ -41,7 +43,8 @@ void GameManager::update() {
 }
 
 void GameManager::draw() const {
-    if (m_dialogueText.has_value()) {
+    if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
+        const DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
         // Get textbox width
         const float width = GetScreenWidth();
         const float height = GetScreenHeight();
@@ -55,13 +58,13 @@ void GameManager::draw() const {
         DrawRectangleRoundedLines(textBox, 0.15, 0, WHITE);
 
         // Draw dialogue text
-        m_dialogueText->draw({textBox.x + 10, textBox.y + 10});
+        dialogueText.draw({textBox.x + 10, textBox.y + 10});
 
-        if (m_dialogueText->isDone() && !m_dialogueText->m_dialogueNodes.empty()) {
+        if (dialogueText.isDone() && !dialogueText.m_dialogueNodes.empty()) {
             float y = textBox.y + textBox.height / 2;
-            DrawText(">", 20, y + m_dialogueText->m_dialogueNodeIndex * 24, 20, WHITE);
-            for (const auto &node : m_dialogueText->m_dialogueNodes) {
-                node->draw({30, y});
+            DrawText(">", 20, y + dialogueText.m_dialogueNodeIndex * 24, 20, WHITE);
+            for (const auto &node : dialogueText.m_dialogueNodes) {
+                node.draw({30, y});
                 y += 24;
             }
         }
@@ -76,12 +79,22 @@ void GameManager::unpause() {
     m_paused = false;
 }
 
-void GameManager::showDialogue(const DialogueText &dialogueText) {
+void GameManager::showDialogue(const DialogueTextId dialogueTextId) {
+    if (dialogueTextId == DIALOGUE_TEXT_ID_CLOSE) {
+        closeDialogue();
+        return;
+    }
+
     pause();
-    m_dialogueText = dialogueText;
+    m_dialogueTextId = dialogueTextId;
+    m_dialogueTextMap.at(m_dialogueTextId).reset();
 }
 
 void GameManager::closeDialogue() {
-    m_dialogueText.reset();
+    if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
+        m_dialogueTextMap.at(m_dialogueTextId).reset();
+    }
+
+    m_dialogueTextId = DIALOGUE_TEXT_ID_CLOSE;
     unpause();
 }

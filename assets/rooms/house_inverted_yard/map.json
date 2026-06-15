@@ -1,14 +1,14 @@
 {
   "entrances": [
     {
-      "name": "house_inverted_yard",
+      "name": "house_front_yard",
       "x": 325,
       "y": 647
     }
   ],
   "transitions": [
     {
-      "name": "house_inverted_yard",
+      "name": "house_front_yard",
       "points": [
         {
           "x": 326,
@@ -310,5 +310,7 @@
         }
       ]
     }
-  ]
+  ],
+  "interactables": [],
+  "dialogue": []
 }

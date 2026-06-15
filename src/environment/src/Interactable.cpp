@@ -11,6 +11,8 @@
 #include "Character.h"
 #include <Actor.h>
 
+#include "GameManager.h"
+
 void Interactable::update() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && canInteract() && isHovered()) {
         interact();
@@ -26,14 +28,15 @@ void Interactable::draw() const {
             outlineColor[1] = 0.5f;
             outlineColor[2] = 0.5f;
         }
+        constexpr float outlineSize = 1.0f;
+        const float textureSize[2] = { m_size.x, m_size.y };
+
         auto &shader = m_assetManager->getShader("outline");
         const int outlineSizeLoc = shader.GetLocation("outlineSize");
         const int outlineColorLoc = shader.GetLocation("outlineColor");
         const int textureSizeLoc = shader.GetLocation("textureSize");
-        constexpr float outlineSize = 1.0f;
         shader.SetValue(outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
         shader.SetValue(outlineColorLoc, outlineColor, SHADER_UNIFORM_VEC4);
-        const float textureSize[2] = { m_size.x, m_size.y };
         shader.SetValue(textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
 
         BeginShaderMode(shader);
@@ -53,7 +56,7 @@ void Interactable::draw() const {
 }
 
 void Interactable::interact() const {
-    m_callback(ENTITY_MEMBERS);
+    m_gameManager->showDialogue(m_dialogueTextId);
 }
 
 bool Interactable::canInteract() const {

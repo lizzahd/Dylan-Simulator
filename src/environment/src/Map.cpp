@@ -2,15 +2,18 @@
 // Created by xerox on 4/25/2026.
 //
 
+#include <Map.h>
+
 #include <algorithm>
-#include <raylib-cpp.hpp>
 #include <filesystem>
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-#include <Map.h>
+#include <hot_entities/EntityManager.hpp>
+
 #include <Utils.h>
 
+#include "GameManager.h"
 #include "Player.h"
 
 #define ROOMS_PATH "../../assets/rooms/"
@@ -26,7 +29,7 @@ void Geometry::drawDebug() const {
     }
 }
 
-Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad) {
+Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager) {
     // Background Textures
     for (const auto& entry : fs::directory_iterator(ROOMS_PATH + roomName)) {
         fs::path path = entry.path();
@@ -55,7 +58,7 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad) {
     }
 
     // Load geometry
-    std::ifstream f(ROOMS_PATH + roomName + "/geometry.json");
+    std::ifstream f(ROOMS_PATH + roomName + "/map.json");
     const auto &j = json::parse(f);
 
     const auto &transitions = j["transitions"];
@@ -92,6 +95,20 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad) {
 
         m_geometries.emplace_back(rPoints, rCollisionLines);
     }
+
+    for (const auto &interactable : j["interactables"]) {
+        std::string tex = interactable["tex"];
+        entityManager->create<Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), interactable["dialogueId"]);
+    }
+
+    for (const auto &dialogue : j["dialogue"]) {
+        DialogueText dialogueText(gameManager, dialogue["text"], 1);
+        for (const auto &option : dialogue["options"]) {
+            dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], option["nextId"], [](const auto&) {}); // TODO: Callback
+        }
+
+        gameManager->m_dialogueTextMap.emplace(dialogue["id"], dialogueText);
+    }
 }
 
 void Room::drawBackgroundLayers() const {
@@ -126,13 +143,6 @@ std::optional<std::string> Room::getTransitions(const raylib::Vector2 pos) const
     return std::nullopt;
 }
 
-Map::Map(std::string startRoomName) : m_currentRoom(startRoomName) {
-    std::set roomsToLoad{startRoomName};
-    for (const auto &roomName : roomsToLoad) {
-        m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad));
-    }
-}
-
 void Map::drawBackgroundLayers() const {
     m_rooms.at(m_currentRoom)->drawBackgroundLayers();
 }
@@ -150,6 +160,14 @@ void Map::transition(const std::string &room, Player *player) {
     player->m_direction = Direction::Down;
     player->m_pos = m_rooms.at(room)->m_entrances[m_currentRoom];
     m_currentRoom = room;
+}
+
+void Map::load(const std::string &startRoomName, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager) {
+    std::set roomsToLoad{startRoomName};
+    for (const auto &roomName : roomsToLoad) {
+        m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad, entityManager, gameManager));
+    }
+    m_currentRoom = startRoomName;
 }
 
 std::vector<Geometry> &Map::getGeometries() const {

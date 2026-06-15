@@ -6,9 +6,10 @@
 
 #include <raylib-cpp.hpp>
 
+#include "GameManager.h"
 #include "StyledText.h"
 
-void DialogueNode::draw(raylib::Vector2 pos) const {
+void DialogueNode::draw(const raylib::Vector2 pos) const {
     drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 20, 2, WHITE, 0);
 }
 
@@ -50,6 +51,18 @@ void DialogueText::changeIndex(const int change) {
 }
 
 void DialogueText::select() {
-    // TODO: Recursive browsing
-    m_dialogueNodes[m_dialogueNodeIndex]->m_callback(m_gameManager);
+    if (!isInitialized()) {
+        return;
+    }
+
+    m_dialogueNodes[m_dialogueNodeIndex].m_callback(m_gameManager);
+    m_gameManager->showDialogue(m_dialogueNodes[m_dialogueNodeIndex].m_nextTextId);
+    reset();
+}
+
+void DialogueText::reset() {
+    m_currentDelay = 0;
+    m_currentLength = 1;
+    m_initialDelay = 5;
+    m_dialogueNodeIndex = 0;
 }

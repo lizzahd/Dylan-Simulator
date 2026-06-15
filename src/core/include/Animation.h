@@ -12,9 +12,14 @@
 #include <hot_assets/AssetManager.h>
 
 enum ANIMATION_DRAW_FLAGS {
-    ANIMATION_DRAW_FLAG_NONE = 0,
-    ANIMATION_DRAW_FLAG_SHADOW,
-    ANIMATION_DRAW_FLAG_OUTLINE,
+    ANIMATION_DRAW_FLAG_NONE        = 0,
+    ANIMATION_DRAW_FLAG_SHADOW      = 1 << 0,
+    ANIMATION_DRAW_FLAG_OUTLINE     = 1 << 1,
+};
+
+struct AnimationEffectParams {
+    float outlineColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    float outlineThickness = 1.0f;
 };
 
 class Animation {
@@ -38,8 +43,8 @@ public:
     {}
 
     void update();
-    void draw(raylib::Vector2 pos, float ySrcOffset) const;
-    void draw(raylib::Vector2 pos) const;
+    void draw(raylib::Vector2 pos, float ySrcOffset, int flags = ANIMATION_DRAW_FLAG_NONE, const AnimationEffectParams &effectParams = {}) const;
+    void draw(raylib::Vector2 pos, int flags = ANIMATION_DRAW_FLAG_NONE, const AnimationEffectParams &effectParams = {}) const;
     void drawOutline(raylib::Vector2 pos, float ySrcOffset, Color color) const;
     void reset();
     void play();

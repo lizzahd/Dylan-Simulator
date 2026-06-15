@@ -25,28 +25,38 @@ void Animation::update() {
     }
 }
 
-void Animation::draw(const raylib::Vector2 pos, const float ySrcOffset) const {
+void Animation::draw(const raylib::Vector2 pos, const float ySrcOffset, const int flags, const AnimationEffectParams &effectParams) const {
     const raylib::Rectangle src{static_cast<float>(m_currentFrame) * m_size.x, ySrcOffset * m_size.y, m_size.x, m_size.y};
     const raylib::Rectangle dst{{std::round(pos.x), std::round(pos.y)}, {m_size.x, m_size.y}};
+    const auto &tex = m_assetManager->getTex(m_tex);
 
-    // // It's shadow time
-    // m_assetManager->getTex(m_tex).Draw(
-    //     src,
-    //     raylib::Rectangle{pos.x, pos.y, m_size.x, m_size.y},
-    //     m_origin,
-    //     -60,
-    //     raylib::Color{0, 0, 0, 155}
-    // );
+    if (flags & ANIMATION_DRAW_FLAG_OUTLINE) {
+        const float textureSize[2] = { static_cast<float>(tex.GetWidth()), static_cast<float>(tex.GetHeight()) };
 
-    m_assetManager->getTex(m_tex).Draw(
+        auto &shader = m_assetManager->getShader("outline");
+        const int outlineSizeLoc = shader.GetLocation("outlineSize");
+        const int outlineColorLoc = shader.GetLocation("outlineColor");
+        const int textureSizeLoc = shader.GetLocation("textureSize");
+        shader.SetValue(outlineSizeLoc, &effectParams.outlineThickness, SHADER_UNIFORM_FLOAT);
+        shader.SetValue(outlineColorLoc, effectParams.outlineColor, SHADER_UNIFORM_VEC4);
+        shader.SetValue(textureSizeLoc, textureSize, SHADER_UNIFORM_VEC2);
+
+        BeginShaderMode(shader);
+    }
+
+    tex.Draw(
         src,
         dst,
         m_origin
     );
+
+    if (flags & ANIMATION_DRAW_FLAG_OUTLINE) {
+        EndShaderMode();
+    }
 }
 
-void Animation::draw(const raylib::Vector2 pos) const {
-    draw(pos, 0);
+void Animation::draw(const raylib::Vector2 pos, const int flags, const AnimationEffectParams &effectParams) const {
+    draw(pos, 0, flags, effectParams);
 }
 
 void Animation::drawOutline(const raylib::Vector2 pos, const float ySrcOffset, const Color color) const {

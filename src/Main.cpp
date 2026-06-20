@@ -21,7 +21,9 @@ int main() {
     SetExitKey(0);
     InitAudioDevice();
 
-    AssetManager assetManager("../..");
+    AssetManager assetManager;
+    assetManager.loadTextures("../../assets/textures");
+    assetManager.loadShaders("../../assets/shaders");
 
     // Rendering
     raylib::Camera2D camera(

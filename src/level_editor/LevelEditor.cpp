@@ -91,7 +91,9 @@ int main() {
 
     #pragma region GameInit
     // Assets
-    AssetManager assetManager("../..");
+    AssetManager assetManager;
+    assetManager.loadTextures("../../assets/textures");
+    assetManager.loadShaders("../../assets/shaders");
 
     // Rendering
     raylib::Camera2D camera(

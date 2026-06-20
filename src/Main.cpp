@@ -35,7 +35,7 @@ int main() {
 
     // Game State Management
     auto gameManager = std::make_shared<GameManager>();
-    gameManager->load();
+    gameManager->init();
 
     // Entity management
     const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);
@@ -51,11 +51,19 @@ int main() {
     raylib::RenderTexture viewport = LoadRenderTexture(1000, 1000);
     raylib::Vector2 viewportPos;
 
+    float pixelation = 2048;
+
     while (!window.ShouldClose()) {
         camera->target = player->m_pos;
         window.BeginDrawing();
 
         window.ClearBackground(BLACK); // NOLINT
+
+        pixelation += GetMouseWheelMove() * 10;
+        const auto &shader = assetManager->getShader("pixelate");
+        const int pixelsLoc = shader.GetLocation("pixels");
+        SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
+        BeginShaderMode(shader);
 
         // BeginTextureMode(viewport);
         // ClearBackground(BLACK); // NOLINT
@@ -123,6 +131,8 @@ int main() {
         //     WHITE
         // );
         // DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
+
+        EndShaderMode();
 
         DrawFPS(5, 5);
 

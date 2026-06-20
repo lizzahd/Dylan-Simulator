@@ -16,7 +16,7 @@
 
 using json = nlohmann::json;
 
-void GameManager::load() {
+void GameManager::init() {
     // Load base.json
     std::ifstream f("../../assets/base.json");
     const auto &j = json::parse(f);

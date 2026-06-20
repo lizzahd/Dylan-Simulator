@@ -3,6 +3,7 @@ project(TTRPG)
 
 set(CMAKE_CXX_STANDARD 23)
 
+# -------- Core Library --------
 include(FetchContent)
 
 FetchContent_Declare(
@@ -21,8 +22,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(hot_entities)
 
-add_executable(
-        TTRPG Main.cpp
+add_library(game_core STATIC
         core/src/Actor.cpp
         core/src/AStar.cpp
         environment/src/Map.cpp
@@ -44,16 +44,16 @@ add_executable(
         core/include/Dialogue.h
 )
 
-target_link_libraries(TTRPG PRIVATE hot_assets)
+target_link_libraries(game_core PUBLIC hot_assets)
 
-target_compile_definitions(TTRPG PRIVATE
+target_compile_definitions(game_core PUBLIC
     ENTITY_TYPES_HEADER=<EntityTypes.h>
     ENTITY_MANAGER_EXTERNAL_HEADER=<EntityManagerExternal.h>
 )
-target_link_libraries(TTRPG PRIVATE hot_entities)
+target_link_libraries(game_core PUBLIC hot_entities)
 
 find_path(RAYLIB_CPP_INCLUDE_DIRS "raylib-cpp.hpp")
-target_include_directories(TTRPG PRIVATE
+target_include_directories(game_core PUBLIC
         ${RAYLIB_CPP_INCLUDE_DIRS}
         characters/include
         core/include
@@ -62,7 +62,23 @@ target_include_directories(TTRPG PRIVATE
 
 find_package(raylib CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(TTRPG PRIVATE
+target_link_libraries(game_core PUBLIC
         raylib
         nlohmann_json::nlohmann_json
 )
+
+# -------- Game --------
+add_executable(game
+        Main.cpp
+)
+
+target_link_libraries(game PRIVATE game_core)
+
+# -------- Level Editor --------
+add_executable(level_editor
+        level_editor/LevelEditor.cpp
+        level_editor/Button.cpp
+        level_editor/Button.h
+)
+
+target_link_libraries(level_editor PRIVATE game_core)

@@ -44,11 +44,16 @@ void Animation::draw(const raylib::Vector2 pos, const float ySrcOffset, const in
         BeginShaderMode(shader);
     }
 
+    // const auto &shader = m_assetManager->getShader("pixelate");
+    // BeginShaderMode(shader);
+
     tex.Draw(
         src,
         dst,
         m_origin
     );
+
+    // EndShaderMode();
 
     if (flags & ANIMATION_DRAW_FLAG_OUTLINE) {
         EndShaderMode();

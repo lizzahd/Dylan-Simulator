@@ -11,7 +11,7 @@ public:
     ~GameManager() = default;
     GameManager() = default;
 
-    void load();
+    void init();
     void update();
     void draw() const;
     void pause();

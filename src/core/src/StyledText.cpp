@@ -9,7 +9,7 @@
 #include "GameManager.h"
 
 void drawStyledText(
-    const std::shared_ptr<const GameManager> &gameManager,
+    GameManager *gameManager,
     Font font,
     const std::string &fullText,
     const raylib::Vector2 pos,

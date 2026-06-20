@@ -31,7 +31,7 @@ void Geometry::drawDebug() const {
     }
 }
 
-Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager) {
+Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, EntityManager *entityManager, GameManager *gameManager) {
     // Background Textures
     for (const auto& entry : fs::directory_iterator(ROOMS_PATH + roomName)) {
         fs::path path = entry.path();
@@ -181,7 +181,7 @@ void Map::transition(const std::string &room, Player *player) {
     m_currentRoom = room;
 }
 
-void Map::load(const std::string &startRoomName, const std::shared_ptr<EntityManager> &entityManager, const std::shared_ptr<GameManager> &gameManager) {
+void Map::load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager) {
     std::set roomsToLoad{startRoomName};
     for (const auto &roomName : roomsToLoad) {
         m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad, entityManager, gameManager));

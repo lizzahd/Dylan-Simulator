@@ -11,10 +11,10 @@
                                     class GameManager;
 
 /// The arguments EntityManager needs for its constructor
-#define ENTITY_MANAGER_REQUIREMENTS const std::shared_ptr<AssetManager>& assetManager, \
-                                    const std::shared_ptr<Camera2D>& camera, \
-                                    const std::shared_ptr<Map>& map, \
-                                    const std::shared_ptr<GameManager>& gameManager
+#define ENTITY_MANAGER_REQUIREMENTS AssetManager *assetManager, \
+                                    Camera2D *camera, \
+                                    Map *map, \
+                                    GameManager *gameManager
 
 /// The values being passed to an entity upon its creation in EntityManager
 #define ENTITY_MANAGER_MEMBERS      m_assetManager, \
@@ -29,7 +29,7 @@
                                     , m_gameManager(gameManager)
 
 /// The member declarations for EntityManager
-#define ENTITY_MANAGER_MEMBERS_DECL std::shared_ptr<AssetManager> m_assetManager; \
-                                    std::shared_ptr<Camera2D> m_camera; \
-                                    std::shared_ptr<Map> m_map; \
-                                    std::shared_ptr<GameManager> m_gameManager;
+#define ENTITY_MANAGER_MEMBERS_DECL AssetManager *m_assetManager; \
+                                    Camera2D *m_camera; \
+                                    Map *m_map; \
+                                    GameManager *m_gameManager;

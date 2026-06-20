@@ -14,7 +14,7 @@
 // so we don't need to worry about it.
 // The macro just makes this easier to deal with
 #define ENTITY_REQUIREMENTS const int id, \
-                            const std::shared_ptr<EntityManager>& entityManager, \
+                            EntityManager *entityManager, \
                             ENTITY_MANAGER_REQUIREMENTS
 
 #define ENTITY_PARAMETERS   id, \
@@ -116,10 +116,10 @@ public:
     int m_id;
 protected:
     EntityBroadType m_entityBroadType;
-    std::shared_ptr<EntityManager> m_entityManager;
-    std::shared_ptr<AssetManager> m_assetManager;
-    std::shared_ptr<Camera2D> m_camera;
-    std::shared_ptr<Map> m_map;
-    std::shared_ptr<GameManager> m_gameManager;
+    EntityManager *m_entityManager;
+    AssetManager *m_assetManager;
+    Camera2D *m_camera;
+    Map *m_map;
+    GameManager *m_gameManager;
     int m_layer = 1;
 };

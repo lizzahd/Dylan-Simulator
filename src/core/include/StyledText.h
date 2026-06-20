@@ -16,7 +16,7 @@ namespace raylib {
 }
 
 void drawStyledText(
-    const std::shared_ptr<const GameManager> &gameManager,
+    GameManager *gameManager,
     Font font,
     const std::string &fullText,
     raylib::Vector2 pos,

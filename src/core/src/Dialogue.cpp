@@ -13,7 +13,7 @@ void DialogueNode::draw(const raylib::Vector2 pos) const {
     drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 20, 2, WHITE, 0);
 }
 
-DialogueText DialogueText::fromJson(const std::shared_ptr<GameManager> &gameManager, const nlohmann::json &dialogue, const DialogueTextId offset) {
+DialogueText DialogueText::fromJson(GameManager *gameManager, const nlohmann::json &dialogue, const DialogueTextId offset) {
     DialogueText dialogueText(gameManager, dialogue["text"]);
     for (const auto &option : dialogue["options"]) {
         int nextId = option["nextId"];

@@ -21,32 +21,31 @@ int main() {
     SetExitKey(0);
     InitAudioDevice();
 
-    // Assets
-    const auto assetManager = std::make_shared<AssetManager>("../..");
+    AssetManager assetManager("../..");
 
     // Rendering
-    auto camera = std::make_shared<raylib::Camera2D>(
+    raylib::Camera2D camera(
         raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2),
         raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2)
     );
 
     // Map
-    auto map = std::make_shared<Map>();
+    Map map;
 
     // Game State Management
-    auto gameManager = std::make_shared<GameManager>();
-    gameManager->init();
+    GameManager gameManager;
+    gameManager.init();
 
     // Entity management
-    const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);
-    entityManager->registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
-    entityManager->registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
+    EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
+    entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
+    entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
 
-    map->load("house_front_yard", entityManager, gameManager);
+    map.load("house_front_yard", &entityManager, &gameManager);
 
-    const auto player = entityManager->create<Player>(raylib::Vector2{300, 500});
+    const auto player = entityManager.create<Player>(raylib::Vector2{300, 500});
 
-    entityManager->create<Dubi>(raylib::Vector2{200, 550});
+    entityManager.create<Dubi>(raylib::Vector2{200, 550});
 
     raylib::RenderTexture viewport = LoadRenderTexture(1000, 1000);
     raylib::Vector2 viewportPos;
@@ -54,13 +53,13 @@ int main() {
     float pixelation = 2048;
 
     while (!window.ShouldClose()) {
-        camera->target = player->m_pos;
+        camera.target = player->m_pos;
         window.BeginDrawing();
 
         window.ClearBackground(BLACK); // NOLINT
 
         pixelation += GetMouseWheelMove() * 10;
-        const auto &shader = assetManager->getShader("pixelate");
+        const auto &shader = assetManager.getShader("pixelate");
         const int pixelsLoc = shader.GetLocation("pixels");
         SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
         BeginShaderMode(shader);
@@ -69,39 +68,39 @@ int main() {
         // ClearBackground(BLACK); // NOLINT
 
         // Control
-        const raylib::Vector2 mousePos = camera->GetScreenToWorld(GetMousePosition());
+        const raylib::Vector2 mousePos = camera.GetScreenToWorld(GetMousePosition());
         if (IsKeyPressed(KEY_GRAVE)) {
             inDebugMode = !inDebugMode;
         }
 
         // Map
-        map->drawBackgroundLayers();
+        map.drawBackgroundLayers();
         if (inDebugMode) {
-            map->drawDebug();
+            map.drawDebug();
         }
 
         // Zero
         raylib::Vector2().DrawCircle(2, RED);
 
         // Update entities and stuff
-        if (!gameManager->m_paused) {
-            entityManager->updateAll();
+        if (!gameManager.m_paused) {
+            entityManager.updateAll();
         }
         // entityManager->drawAll();
 
         // TODO: Optimize!!!
-        std::vector<int> entityIds = entityManager->getEntitiesByType<Actor>();
+        std::vector<int> entityIds = entityManager.getEntitiesByType<Actor>();
         std::ranges::sort(entityIds, [&](const int a, const int b) {
-            const auto *entityA = entityManager->getAs<Actor>(a);
-            const auto *entityB = entityManager->getAs<Actor>(b);
+            const auto *entityA = entityManager.getAs<Actor>(a);
+            const auto *entityB = entityManager.getAs<Actor>(b);
             return entityA->m_pos.y < entityB->m_pos.y;
         });
         for (const int id : entityIds) {
-            const auto *entity = entityManager->getAs<Actor>(id);
+            const auto *entity = entityManager.getAs<Actor>(id);
             entity->draw();
         }
 
-        map->drawForegroundLayers();
+        map.drawForegroundLayers();
 
         // UI Scheisse
         if (inDebugMode) {
@@ -113,8 +112,8 @@ int main() {
             viewportPos.y += GetMouseDelta().y;
         }
 
-        gameManager->update();
-        gameManager->draw();
+        gameManager.update();
+        gameManager.draw();
 
         // EndTextureMode();
 

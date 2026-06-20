@@ -21,7 +21,7 @@ void GameManager::init() {
     std::ifstream f("../../assets/base.json");
     const auto &j = json::parse(f);
     for (const auto &dialogue : j["dialogue"]) {
-        m_dialogueTextMap.emplace(dialogue[0]["id"], DialogueText::fromJson(shared_from_this(), dialogue[0]));
+        m_dialogueTextMap.emplace(dialogue[0]["id"], DialogueText::fromJson(this, dialogue[0]));
     }
 }
 

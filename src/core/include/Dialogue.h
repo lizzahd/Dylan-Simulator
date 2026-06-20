@@ -22,13 +22,13 @@ namespace raylib {
 
 class GameManager;
 
-using DialogueOptionCallback = std::function<void(const std::shared_ptr<GameManager>&)>;
+using DialogueOptionCallback = std::function<void(GameManager *)>;
 using DialogueTextId = int;
 
 class DialogueNode {
 public:
     ~DialogueNode() = default;
-    explicit DialogueNode(const std::shared_ptr<GameManager> &gameManager, std::string text, const DialogueTextId nextTextId, DialogueOptionCallback callback)
+    explicit DialogueNode(GameManager *gameManager, std::string text, const DialogueTextId nextTextId, DialogueOptionCallback callback)
         : m_nextTextId(nextTextId)
         , m_text(std::move(text))
         , m_gameManager(gameManager)
@@ -39,18 +39,18 @@ public:
 
     DialogueTextId m_nextTextId;
     std::string m_text;
-    std::shared_ptr<GameManager> m_gameManager;
+    GameManager *m_gameManager;
     DialogueOptionCallback m_callback;
 };
 
 class DialogueText {
 public:
     ~DialogueText() = default;
-    explicit DialogueText(const std::shared_ptr<GameManager> &gameManager, std::string text)
+    explicit DialogueText(GameManager *gameManager, std::string text)
         : m_text(std::move(text))
         , m_gameManager(gameManager)
     {}
-    static DialogueText fromJson(const std::shared_ptr<GameManager> &gameManager, const nlohmann::json &dialogue, DialogueTextId offset = 0);
+    static DialogueText fromJson(GameManager *gameManager, const nlohmann::json &dialogue, DialogueTextId offset = 0);
 
     void update();
     void draw(raylib::Vector2 pos) const;
@@ -72,5 +72,5 @@ public:
     int m_dialogueNodeIndex = 0;
     std::optional<DialogueTextId> m_nextTextId;
 
-    std::shared_ptr<GameManager> m_gameManager;
+    GameManager *m_gameManager;
 };

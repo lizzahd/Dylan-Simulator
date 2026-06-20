@@ -26,7 +26,7 @@ class Animation {
 public:
     ~Animation() = default;
     explicit Animation(
-        const std::shared_ptr<AssetManager> &assetManager,
+        AssetManager *assetManager,
         std::string tex,
         const raylib::Vector2 &size,
         const raylib::Vector2 &origin,
@@ -53,7 +53,7 @@ public:
     int m_currentFrame = 0;
     int m_currentFrameTickDelay = 0;
     bool m_playing = false;
-    std::shared_ptr<AssetManager> m_assetManager;
+    AssetManager *m_assetManager;
 
     std::string m_tex;
     raylib::Vector2 m_size;

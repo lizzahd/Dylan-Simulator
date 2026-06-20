@@ -91,26 +91,26 @@ int main() {
 
     #pragma region GameInit
     // Assets
-    const auto assetManager = std::make_shared<AssetManager>("../..");
+    AssetManager assetManager("../..");
 
     // Rendering
-    auto camera = std::make_shared<raylib::Camera2D>(
+    raylib::Camera2D camera(
         raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2),
         raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2)
     );
 
     // Map
-    auto map = std::make_shared<Map>();
-    map->m_currentRoom = "current";
-    map->m_rooms.emplace("current", std::make_shared<Room>());
+    Map map;
+    map.m_currentRoom = "current";
+    map.m_rooms.emplace("current", std::make_shared<Room>());
 
     // Game State Management
-    auto gameManager = std::make_shared<GameManager>();
+    GameManager gameManager;
 
     // Entity management
-    const auto entityManager = std::make_shared<EntityManager>(assetManager, camera, map, gameManager);
-    entityManager->registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
-    entityManager->registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
+    EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
+    entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
+    entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
     #pragma endregion GameInit
 
     #pragma region EditorInit
@@ -129,12 +129,12 @@ int main() {
     makeActorEntityButton(0, "Player", [&] {
         selectLayer = SelectLayer::Entity;
         editMode = EditMode::AddEntity;
-        entityPaintbrush = entityManager->createObject<Player>(raylib::Vector2(0, 0));
+        entityPaintbrush = entityManager.createObject<Player>(raylib::Vector2(0, 0));
     });
     makeActorEntityButton(1, "Dubi", [&] {
         selectLayer = SelectLayer::Entity;
         editMode = EditMode::AddEntity;
-        entityPaintbrush = entityManager->createObject<Dubi>(raylib::Vector2(0, 0));
+        entityPaintbrush = entityManager.createObject<Dubi>(raylib::Vector2(0, 0));
     });
     #pragma endregion EditorInit
 
@@ -180,43 +180,43 @@ int main() {
         window.BeginDrawing();
         window.ClearBackground(BLACK); // NOLINT
 
-        camera->BeginMode();
+        camera.BeginMode();
         // Map
-        map->drawBackgroundLayers();
+        map.drawBackgroundLayers();
 
         // Zero
         raylib::Vector2().DrawCircle(2, RED);
 
         // TODO: Optimize!!!
-        std::vector<int> entityIds = entityManager->getEntitiesByType<Actor>();
+        std::vector<int> entityIds = entityManager.getEntitiesByType<Actor>();
         std::ranges::sort(entityIds, [&](const int a, const int b) {
-            const auto *entityA = entityManager->getAs<Actor>(a);
-            const auto *entityB = entityManager->getAs<Actor>(b);
+            const auto *entityA = entityManager.getAs<Actor>(a);
+            const auto *entityB = entityManager.getAs<Actor>(b);
             return entityA->m_pos.y < entityB->m_pos.y;
         });
         for (const int id : entityIds) {
-            const auto *entity = entityManager->getAs<Actor>(id);
+            const auto *entity = entityManager.getAs<Actor>(id);
             entity->draw();
         }
 
         if (entityPaintbrush.has_value() && selectLayer == SelectLayer::Entity) {
             const auto &entity = entityPaintbrush.value();
-            entity->m_pos = camera->GetScreenToWorld(GetMousePosition());
+            entity->m_pos = camera.GetScreenToWorld(GetMousePosition());
             entity->draw();
 
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                entityManager->create(std::move(entityPaintbrush.value()));
+                entityManager.create(std::move(entityPaintbrush.value()));
                 entityPaintbrush = std::nullopt;
             }
         }
 
-        map->drawForegroundLayers();
-        camera->EndMode();
+        map.drawForegroundLayers();
+        camera.EndMode();
         #pragma endregion GameDrawing
 
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-            camera->target.x -= mouseDelta.x / camera->zoom;
-            camera->target.y -= mouseDelta.y / camera->zoom;
+            camera.target.x -= mouseDelta.x / camera.zoom;
+            camera.target.y -= mouseDelta.y / camera.zoom;
         }
 
         if (IsKeyDown(KEY_LEFT_CONTROL)) {
@@ -225,7 +225,7 @@ int main() {
             }
 
             // Zoom
-            camera->zoom += GetMouseWheelMove() / 5;
+            camera.zoom += GetMouseWheelMove() / 5;
         }
 
         #pragma region Buttons

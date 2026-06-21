@@ -22,10 +22,10 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(hot_entities)
 
-add_library(game_core STATIC
+add_library(core_lib STATIC
         core/src/Actor.cpp
         core/src/AStar.cpp
-        environment/src/Map.cpp
+        overworld_map/src/Map.cpp
         core/src/Utils.cpp
         characters/src/Character.cpp
         characters/include/Character.h
@@ -33,7 +33,7 @@ add_library(game_core STATIC
         characters/include/Player.h
         core/src/Animation.cpp
         core/include/Animation.h
-        environment/src/Interactable.cpp
+        overworld_map/src/Interactable.cpp
         core/src/StyledText.cpp
         core/include/StyledText.h
         core/src/GameManager.cpp
@@ -44,35 +44,60 @@ add_library(game_core STATIC
         core/include/Dialogue.h
 )
 
-target_link_libraries(game_core PUBLIC hot_assets)
+target_link_libraries(core_lib PUBLIC hot_assets)
 
-target_compile_definitions(game_core PUBLIC
+target_compile_definitions(core_lib PUBLIC
     ENTITY_TYPES_HEADER=<EntityTypes.h>
     ENTITY_MANAGER_EXTERNAL_HEADER=<EntityManagerExternal.h>
 )
-target_link_libraries(game_core PUBLIC hot_entities)
+target_link_libraries(core_lib PUBLIC hot_entities)
 
 find_path(RAYLIB_CPP_INCLUDE_DIRS "raylib-cpp.hpp")
-target_include_directories(game_core PUBLIC
+target_include_directories(core_lib PUBLIC
         ${RAYLIB_CPP_INCLUDE_DIRS}
         characters/include
         core/include
-        environment/include
+        overworld_map/include
 )
 
 find_package(raylib CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(game_core PUBLIC
+target_link_libraries(core_lib PUBLIC
         raylib
         nlohmann_json::nlohmann_json
 )
 
-# -------- Game --------
-add_executable(game
+# -------- Main Game --------
+add_executable(overworld_game
         Main.cpp
 )
 
-target_link_libraries(game PRIVATE game_core)
+target_link_libraries(overworld_game PRIVATE core_lib)
+
+# -------- Gauntlet Library --------
+add_library(gauntlet_lib STATIC
+        gauntlet/src/GauntletCharacter.cpp
+        gauntlet/src/GauntletPlayer.cpp
+        gauntlet/include/GauntletPlayer.h
+        gauntlet/src/GauntletUtils.cpp
+        gauntlet/include/GauntletUtils.h
+)
+
+target_link_libraries(gauntlet_lib PRIVATE core_lib)
+
+target_include_directories(gauntlet_lib PUBLIC
+        gauntlet/include
+)
+
+# -------- Gauntlet Game --------
+add_executable(gauntlet_game
+        gauntlet/GauntletMain.cpp
+)
+
+target_link_libraries(gauntlet_game PRIVATE
+        core_lib
+        gauntlet_lib
+)
 
 # -------- Level Editor --------
 add_executable(level_editor
@@ -81,4 +106,4 @@ add_executable(level_editor
         level_editor/Button.h
 )
 
-target_link_libraries(level_editor PRIVATE game_core)
+target_link_libraries(level_editor PRIVATE core_lib)

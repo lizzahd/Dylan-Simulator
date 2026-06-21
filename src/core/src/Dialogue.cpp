@@ -9,85 +9,87 @@
 #include "GameManager.h"
 #include "StyledText.h"
 
-void DialogueNode::draw(const raylib::Vector2 pos) const {
-    drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 20, 2, WHITE, 0);
-}
+namespace core {
+    void DialogueNode::draw(const raylib::Vector2 pos) const {
+        drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 20, 2, WHITE, 0);
+    }
 
-DialogueText DialogueText::fromJson(GameManager *gameManager, const nlohmann::json &dialogue, const DialogueTextId offset) {
-    DialogueText dialogueText(gameManager, dialogue["text"]);
-    for (const auto &option : dialogue["options"]) {
-        int nextId = option["nextId"];
-        if (nextId != -1) {
-            nextId += offset;
+    DialogueText DialogueText::fromJson(GameManager *gameManager, const nlohmann::json &dialogue, const DialogueTextId offset) {
+        DialogueText dialogueText(gameManager, dialogue["text"]);
+        for (const auto &option : dialogue["options"]) {
+            int nextId = option["nextId"];
+            if (nextId != -1) {
+                nextId += offset;
+            }
+            dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], nextId, [](const auto&) {}); // TODO: Callback
         }
-        dialogueText.m_dialogueNodes.emplace_back(gameManager, option["text"], nextId, [](const auto&) {}); // TODO: Callback
-    }
 
-    if (dialogue.contains("nextId")) {
-        int nextId = dialogue["nextId"];
-        if (nextId != -1) {
-            nextId += offset;
+        if (dialogue.contains("nextId")) {
+            int nextId = dialogue["nextId"];
+            if (nextId != -1) {
+                nextId += offset;
+            }
+            dialogueText.m_nextTextId = nextId;
         }
-        dialogueText.m_nextTextId = nextId;
+
+        if (dialogue.contains("textDelay")) {
+            dialogueText.m_maxDelay = dialogue["textDelay"];
+        }
+
+        return dialogueText;
     }
 
-    if (dialogue.contains("textDelay")) {
-        dialogueText.m_maxDelay = dialogue["textDelay"];
+    void DialogueText::update() {
+        if (!isInitialized()) {
+            m_initialDelay--;
+            return;
+        }
+
+        if (isDone()) {
+            return;
+        }
+
+        if (m_currentDelay++ >= m_maxDelay && m_currentLength < m_text.length()) {
+            m_currentDelay = 0;
+            m_currentLength++;
+        }
     }
 
-    return dialogueText;
-}
+    void DialogueText::draw(const raylib::Vector2 pos) const {
+        if (!isInitialized()) {
+            return;
+        }
 
-void DialogueText::update() {
-    if (!isInitialized()) {
-        m_initialDelay--;
-        return;
+        drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 30, 2, WHITE, m_currentLength);
     }
 
-    if (isDone()) {
-        return;
+    bool DialogueText::isDone() const {
+        return m_currentLength >= m_text.length();
     }
 
-    if (m_currentDelay++ >= m_maxDelay && m_currentLength < m_text.length()) {
+    void DialogueText::changeIndex(const int change) {
+        m_dialogueNodeIndex += change;
+        if (m_dialogueNodeIndex >= m_dialogueNodes.size()) {
+            m_dialogueNodeIndex = 0;
+        } else if (m_dialogueNodeIndex < 0) {
+            m_dialogueNodeIndex = m_dialogueNodes.size() - 1;
+        }
+    }
+
+    void DialogueText::select() {
+        if (!isInitialized()) {
+            return;
+        }
+
+        m_dialogueNodes[m_dialogueNodeIndex].m_callback(m_gameManager);
+        m_gameManager->showDialogue(m_dialogueNodes[m_dialogueNodeIndex].m_nextTextId);
+        reset();
+    }
+
+    void DialogueText::reset() {
         m_currentDelay = 0;
-        m_currentLength++;
-    }
-}
-
-void DialogueText::draw(const raylib::Vector2 pos) const {
-    if (!isInitialized()) {
-        return;
-    }
-
-    drawStyledText(m_gameManager, GetFontDefault(), m_text, pos, 30, 2, WHITE, m_currentLength);
-}
-
-bool DialogueText::isDone() const {
-    return m_currentLength >= m_text.length();
-}
-
-void DialogueText::changeIndex(const int change) {
-    m_dialogueNodeIndex += change;
-    if (m_dialogueNodeIndex >= m_dialogueNodes.size()) {
+        m_currentLength = 1;
+        m_initialDelay = 5;
         m_dialogueNodeIndex = 0;
-    } else if (m_dialogueNodeIndex < 0) {
-        m_dialogueNodeIndex = m_dialogueNodes.size() - 1;
     }
-}
-
-void DialogueText::select() {
-    if (!isInitialized()) {
-        return;
-    }
-
-    m_dialogueNodes[m_dialogueNodeIndex].m_callback(m_gameManager);
-    m_gameManager->showDialogue(m_dialogueNodes[m_dialogueNodeIndex].m_nextTextId);
-    reset();
-}
-
-void DialogueText::reset() {
-    m_currentDelay = 0;
-    m_currentLength = 1;
-    m_initialDelay = 5;
-    m_dialogueNodeIndex = 0;
 }

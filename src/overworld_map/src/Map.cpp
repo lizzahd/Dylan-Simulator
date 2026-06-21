@@ -12,16 +12,15 @@
 #include <hot_entities/EntityManager.hpp>
 
 #include <Utils.h>
-
 #include "GameManager.h"
 #include "Player.h"
-
-#define ROOMS_PATH "../../assets/rooms/"
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-static DialogueTextId dialogueIdOffset = 10000;
+#define ROOMS_PATH "../../assets/rooms/"
+
+static core::DialogueTextId dialogueIdOffset = 10000;
 
 void Geometry::drawDebug() const {
     DrawLineStrip(m_vertices.data(), m_vertices.size(), BLUE);
@@ -100,7 +99,7 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, Enti
 
     for (const auto &interactable : j["interactables"]) {
         std::string tex = interactable["tex"];
-        entityManager->create<Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), static_cast<int>(interactable["dialogueId"]) + dialogueIdOffset);
+        entityManager->create<core::Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), static_cast<int>(interactable["dialogueId"]) + dialogueIdOffset);
     }
 
     for (const auto &dialogue : j["dialogue"]) {
@@ -126,7 +125,7 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, Enti
         // }
         //
         // gameManager->m_dialogueTextMap.emplace(static_cast<int>(dialogue["id"]) + dialogueId, dialogueText);
-        gameManager->m_dialogueTextMap.emplace(static_cast<int>(dialogue["id"]) + dialogueIdOffset, DialogueText::fromJson(gameManager, dialogue, dialogueIdOffset));
+        gameManager->m_dialogueTextMap.emplace(static_cast<int>(dialogue["id"]) + dialogueIdOffset, core::DialogueText::fromJson(gameManager, dialogue, dialogueIdOffset));
     }
 }
 
@@ -174,9 +173,9 @@ void Map::drawDebug() const {
     m_rooms.at(m_currentRoom)->drawDebug();
 }
 
-void Map::transition(const std::string &room, Player *player) {
+void Map::transition(const std::string &room, core::Player *player) {
     player->m_vel = 0;
-    player->m_direction = Direction::Down;
+    player->m_direction = core::Direction::Down;
     player->m_pos = m_rooms.at(room)->m_entrances[m_currentRoom];
     m_currentRoom = room;
 }

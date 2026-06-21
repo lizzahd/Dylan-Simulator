@@ -38,88 +38,90 @@ namespace raylib {
 class EntityManager;
 class AssetManager;
 
-class Actor : public IEntity {
-public:
-    explicit Actor(
-        ENTITY_REQUIREMENTS,
-        const EntityBroadType broadEntityType,
-        const EntityType entityType,
-        const raylib::Vector2 pos,
-        const raylib::Vector2 size)
-        : IEntity()
-        , m_pos(pos)
-        , m_size(size)
-        , m_entityType(entityType)
-        , m_id(id)
-        , m_entityBroadType(broadEntityType)
-        , m_entityManager(entityManager)
-        , m_assetManager(assetManager)
-        , m_camera(camera)
-        , m_map(map)
-        , m_gameManager(gameManager)
-    {}
+namespace core {
+    class Actor : public IEntity {
+    public:
+        explicit Actor(
+            ENTITY_REQUIREMENTS,
+            const EntityBroadType broadEntityType,
+            const EntityType entityType,
+            const raylib::Vector2 pos,
+            const raylib::Vector2 size)
+            : IEntity()
+            , m_pos(pos)
+            , m_size(size)
+            , m_entityType(entityType)
+            , m_id(id)
+            , m_entityBroadType(broadEntityType)
+            , m_entityManager(entityManager)
+            , m_assetManager(assetManager)
+            , m_camera(camera)
+            , m_map(map)
+            , m_gameManager(gameManager)
+        {}
 
-    ~Actor() override = default;
+        ~Actor() override = default;
 
-    [[nodiscard]] bool isDead() const override {
-        return m_isDead;
-    }
+        [[nodiscard]] bool isDead() const override {
+            return m_isDead;
+        }
 
-    [[nodiscard]] int getLayer() const override {
-        return m_layer;
-    }
+        [[nodiscard]] int getLayer() const override {
+            return m_layer;
+        }
 
-    void setLayer(const int layer) override {
-        m_layer = layer;
-    }
+        void setLayer(const int layer) override {
+            m_layer = layer;
+        }
 
-    [[nodiscard]] int getId() const override {
-        return m_id;
-    }
+        [[nodiscard]] int getId() const override {
+            return m_id;
+        }
 
-    [[nodiscard]] EntityType getType() const override {
-        return m_entityType;
-    }
+        [[nodiscard]] EntityType getType() const override {
+            return m_entityType;
+        }
 
-    [[nodiscard]] EntityBroadType getBroadType() const override {
-        return m_entityBroadType;
-    }
+        [[nodiscard]] EntityBroadType getBroadType() const override {
+            return m_entityBroadType;
+        }
 
-    [[nodiscard]] virtual raylib::Rectangle getRect() const {
-        return {m_pos, m_size};
-    }
+        [[nodiscard]] virtual raylib::Rectangle getRect() const {
+            return {m_pos, m_size};
+        }
 
-    [[nodiscard]] virtual raylib::Vector2 getCenter() const {
-        return m_pos + m_size / 2;
-    }
+        [[nodiscard]] virtual raylib::Vector2 getCenter() const {
+            return m_pos + m_size / 2;
+        }
 
-    [[nodiscard]] virtual int maxHealth() const {
-        return 100;
-    }
+        [[nodiscard]] virtual int maxHealth() const {
+            return 100;
+        }
 
-    [[nodiscard]] virtual bool hasCollision() const {
-        return true;
-    }
+        [[nodiscard]] virtual bool hasCollision() const {
+            return true;
+        }
 
-    virtual void command(raylib::Vector2) {};
+        virtual void command(raylib::Vector2) {};
 
-    void draw() const override;
-    void drawDebug() const override;
+        void draw() const override;
+        void drawDebug() const override;
 
-    raylib::Vector2 m_pos;
-    raylib::Vector2 m_size;
+        raylib::Vector2 m_pos;
+        raylib::Vector2 m_size;
 
-    bool m_isDead = false;
+        bool m_isDead = false;
 
-    EntityType m_entityType;
+        EntityType m_entityType;
 
-    int m_id;
-protected:
-    EntityBroadType m_entityBroadType;
-    EntityManager *m_entityManager;
-    AssetManager *m_assetManager;
-    Camera2D *m_camera;
-    Map *m_map;
-    GameManager *m_gameManager;
-    int m_layer = 1;
-};
+        int m_id;
+    protected:
+        EntityBroadType m_entityBroadType;
+        EntityManager *m_entityManager;
+        AssetManager *m_assetManager;
+        Camera2D *m_camera;
+        Map *m_map;
+        GameManager *m_gameManager;
+        int m_layer = 1;
+    };
+}

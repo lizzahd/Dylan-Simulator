@@ -7,21 +7,24 @@
 #include <memory>
 #include <string>
 
-class GameManager;
 struct Font;
 struct Color;
+
+class GameManager;
 
 namespace raylib {
     class Vector2;
 }
 
-void drawStyledText(
-    GameManager *gameManager,
-    Font font,
-    const std::string &fullText,
-    raylib::Vector2 pos,
-    float fontSize,
-    float spacing,
-    Color color,
-    int length
-);
+namespace core {
+    void drawStyledText(
+        GameManager *gameManager,
+        Font font,
+        const std::string &fullText,
+        raylib::Vector2 pos,
+        float fontSize,
+        float spacing,
+        Color color,
+        int length
+    );
+}

@@ -21,13 +21,13 @@ void GameManager::init() {
     std::ifstream f("../../assets/base.json");
     const auto &j = json::parse(f);
     for (const auto &dialogue : j["dialogue"]) {
-        m_dialogueTextMap.emplace(dialogue[0]["id"], DialogueText::fromJson(this, dialogue[0]));
+        m_dialogueTextMap.emplace(dialogue[0]["id"], core::DialogueText::fromJson(this, dialogue[0]));
     }
 }
 
 void GameManager::update() {
     if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
-        DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
+        core::DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
         dialogueText.update();
 
         // Dialogue option navigation
@@ -63,7 +63,7 @@ void GameManager::update() {
 
 void GameManager::draw() const {
     if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
-        const DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
+        const core::DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
         // Get textbox width
         const float width = GetScreenWidth();
         const float height = GetScreenHeight();
@@ -98,7 +98,7 @@ void GameManager::unpause() {
     m_paused = false;
 }
 
-void GameManager::showDialogue(const DialogueTextId dialogueTextId) {
+void GameManager::showDialogue(const core::DialogueTextId dialogueTextId) {
     if (dialogueTextId == DIALOGUE_TEXT_ID_CLOSE) {
         closeDialogue();
         return;

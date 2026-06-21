@@ -77,6 +77,8 @@ enum class ActorType {
     Dubi,
 };
 
+using namespace core;
+
 int main() {
     #pragma region RaylibInit
     // Initialize raylib

@@ -11,6 +11,8 @@
 
 #include "Npc.h"
 
+using namespace core;
+
 int main() {
     // Initialize raylib
     SetTraceLogLevel(LOG_WARNING);
@@ -60,11 +62,11 @@ int main() {
 
         window.ClearBackground(BLACK); // NOLINT
 
-        pixelation += GetMouseWheelMove() * 10;
-        const auto &shader = assetManager.getShader("pixelate");
-        const int pixelsLoc = shader.GetLocation("pixels");
-        SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
-        BeginShaderMode(shader);
+        // pixelation += GetMouseWheelMove() * 10;
+        // const auto &shader = assetManager.getShader("pixelate");
+        // const int pixelsLoc = shader.GetLocation("pixels");
+        // SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
+        // BeginShaderMode(shader);
 
         // BeginTextureMode(viewport);
         // ClearBackground(BLACK); // NOLINT
@@ -133,7 +135,7 @@ int main() {
         // );
         // DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
 
-        EndShaderMode();
+        // EndShaderMode();
 
         DrawFPS(5, 5);
 

@@ -13,10 +13,14 @@
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Texture.hpp>
 
-class GameManager;
-class EntityManager;
-class Player;
 struct Line;
+class EntityManager;
+
+namespace core {
+    class Player;
+}
+
+class GameManager;
 
 struct Geometry {
     std::vector<raylib::Vector2> m_vertices;
@@ -25,6 +29,7 @@ struct Geometry {
     void drawDebug() const;
 };
 
+/// Not in namespace core because map is passed as a parameter into entityManager
 struct Room {
     ~Room() = default;
     Room() = default;
@@ -50,6 +55,7 @@ struct Room {
     std::vector<Geometry> m_geometries;
 };
 
+/// Not in namespace core because it's passed as a parameter into entityManager
 class Map {
 public:
     ~Map() = default;
@@ -58,7 +64,7 @@ public:
     void drawBackgroundLayers() const;
     void drawForegroundLayers() const;
     void drawDebug() const;
-    void transition(const std::string &room, Player *player);
+    void transition(const std::string &room, core::Player *player);
     void load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager);
     [[nodiscard]] std::vector<Geometry> &getGeometries() const;
     [[nodiscard]] std::optional<std::string> getTransitions(raylib::Vector2 pos) const;

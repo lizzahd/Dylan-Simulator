@@ -5,10 +5,10 @@
 #pragma once
 
 /// The types used by entity manager so it doesn't need external libraries
-#define ENTITY_MANAGER_DECLARATIONS class Map; \
-                                    class AssetManager; \
-                                    struct Camera2D; \
-                                    class GameManager;
+#define ENTITY_MANAGER_DECLARATIONS class AssetManager; \
+                                    class Map; \
+                                    class GameManager; \
+                                    struct Camera2D;
 
 /// The arguments EntityManager needs for its constructor
 #define ENTITY_MANAGER_REQUIREMENTS AssetManager *assetManager, \

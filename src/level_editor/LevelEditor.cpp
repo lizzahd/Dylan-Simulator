@@ -15,6 +15,8 @@
 #include "Npc.h"
 #include "Player.h"
 
+#define ASSETS_DIR "../../../assets/"
+
 #pragma region SelectLayer
 enum class SelectLayer : int {
     Entity,
@@ -94,8 +96,8 @@ int main() {
     #pragma region GameInit
     // Assets
     AssetManager assetManager;
-    assetManager.loadTextures("../../assets/textures");
-    assetManager.loadShaders("../../assets/shaders");
+    assetManager.loadTextures(ASSETS_DIR"textures");
+    assetManager.loadShaders(ASSETS_DIR"shaders");
 
     // Rendering
     raylib::Camera2D camera(

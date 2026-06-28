@@ -45,7 +45,7 @@ int main() {
     entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
     entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
 
-    map.load("house_front_yard", &entityManager, &gameManager);
+    map.load("lake", &entityManager, &gameManager);
 
     const auto player = entityManager.create<Player>(raylib::Vector2{300, 500});
 

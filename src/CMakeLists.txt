@@ -67,43 +67,17 @@ target_link_libraries(core_lib PUBLIC
         nlohmann_json::nlohmann_json
 )
 
+# ------ Subdirectories ------
+add_subdirectory(combat)
+add_subdirectory(gauntlet)
+add_subdirectory(level_editor)
+
 # -------- Main Game --------
 add_executable(overworld_game
         Main.cpp
 )
 
-target_link_libraries(overworld_game PRIVATE core_lib)
-
-# -------- Gauntlet Library --------
-add_library(gauntlet_lib STATIC
-        gauntlet/src/GauntletCharacter.cpp
-        gauntlet/src/GauntletPlayer.cpp
-        gauntlet/include/GauntletPlayer.h
-        gauntlet/src/GauntletUtils.cpp
-        gauntlet/include/GauntletUtils.h
-)
-
-target_link_libraries(gauntlet_lib PRIVATE core_lib)
-
-target_include_directories(gauntlet_lib PUBLIC
-        gauntlet/include
-)
-
-# -------- Gauntlet Game --------
-add_executable(gauntlet_game
-        gauntlet/GauntletMain.cpp
-)
-
-target_link_libraries(gauntlet_game PRIVATE
+target_link_libraries(overworld_game PRIVATE
         core_lib
-        gauntlet_lib
+        combat_lib
 )
-
-# -------- Level Editor --------
-add_executable(level_editor
-        level_editor/LevelEditor.cpp
-        level_editor/Button.cpp
-        level_editor/Button.h
-)
-
-target_link_libraries(level_editor PRIVATE core_lib)

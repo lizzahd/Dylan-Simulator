@@ -1,4 +1,14 @@
 //
+// Created by xerox on 6/28/2026.
+//
+
+/// !!! ATTENTION !!!
+/// THIS FILE/TARGET IS FOR QUICK TESTING!
+/// NONE OF THE THINGS IN THIS FILE WILL BE INCLUDED IN THE BASE GAME!
+///
+#include <Combat.h>
+
+//
 // Created by xerox on 6/20/2026.
 //
 
@@ -12,25 +22,21 @@
 #include <Actor.h>
 #include <GameManager.h>
 
-#include "GauntletCharacter.h"
-
 #define ASSETS_DIR "../../../assets/"
 
 int main() {
-    #pragma region RaylibInit
     // Initialize raylib
     SetTraceLogLevel(LOG_WARNING);
     constexpr int width = 1152;
     constexpr int height = 648;
-    raylib::Window window(width, height, "Dylan Simulator (Gauntlet)", FLAG_WINDOW_RESIZABLE);
+    raylib::Window window(width, height, "Dylan Simulator (Combat)", FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);
     SetExitKey(0);
     InitAudioDevice();
-    #pragma endregion RaylibInit
 
-    #pragma region GameInit
     // Assets
     AssetManager assetManager;
+    // TODO: Figure out good path
     assetManager.loadTextures(ASSETS_DIR"gauntlet/textures");
 
     // Rendering
@@ -49,11 +55,8 @@ int main() {
 
     // Entity management
     EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
-    entityManager.registerBroadType(EntityBroadType::Character, typeid(gauntlet::Character), typeid(core::Actor));
-    #pragma endregion GameInit
 
     while (!window.ShouldClose()) {
-        #pragma region GameDrawing
         window.BeginDrawing();
         window.ClearBackground(BLACK); // NOLINT
 
@@ -64,7 +67,6 @@ int main() {
         entityManager.drawAll();
 
         map.drawForegroundLayers();
-        #pragma endregion GameDrawing
 
         window.EndDrawing();
     }

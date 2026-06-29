@@ -37,7 +37,7 @@ int main() {
     // Assets
     AssetManager assetManager;
     // TODO: Figure out good path
-    assetManager.loadTextures(ASSETS_DIR"gauntlet/textures");
+    assetManager.loadTextures(ASSETS_DIR"textures");
 
     // Rendering
     raylib::Camera2D camera(

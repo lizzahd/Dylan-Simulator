@@ -6,12 +6,15 @@
 
 enum class EntityBroadType {
     Character,
-    Interactable
+    Interactable,
+    Projectile,
 };
 
 enum class EntityType {
     None,
     Player,
     Npc,
-    Interactable
+    Interactable,
+    Enemy,
+    Projectile,
 };

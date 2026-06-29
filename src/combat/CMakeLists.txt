@@ -1,6 +1,14 @@
 # -------- Library --------
 add_library(combat_lib STATIC
         lib/src/Combat.cpp
+        lib/src/Character.cpp
+        lib/include/Character.h
+        lib/src/Player.cpp
+        lib/include/Player.h
+        lib/src/Enemy.cpp
+        lib/include/Enemy.h
+        lib/include/Projectile.h
+        lib/src/Projectile.cpp
 )
 
 target_link_libraries(combat_lib PRIVATE core_lib)

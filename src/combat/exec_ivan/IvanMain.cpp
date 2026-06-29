@@ -6,11 +6,6 @@
 /// THIS FILE/TARGET IS FOR QUICK TESTING!
 /// NONE OF THE THINGS IN THIS FILE WILL BE INCLUDED IN THE BASE GAME!
 ///
-#include <Combat.h>
-
-//
-// Created by xerox on 6/20/2026.
-//
 
 #include <raylib-cpp.hpp>
 
@@ -18,11 +13,14 @@
 
 #include <Utils.h>
 #include <Map.h>
-#include <Interactable.h>
 #include <Actor.h>
 #include <GameManager.h>
 
-#define ASSETS_DIR "../../../assets/"
+#include "../lib/include/Character.h"
+#include "../lib/include/Player.h"
+#include "../lib/include/Enemy.h"
+
+#define ASSETS_DIR "../../../assets/combat/"
 
 int main() {
     // Initialize raylib
@@ -37,7 +35,7 @@ int main() {
     // Assets
     AssetManager assetManager;
     // TODO: Figure out good path
-    assetManager.loadTextures(ASSETS_DIR"gauntlet/textures");
+    assetManager.loadTextures(ASSETS_DIR"textures");
 
     // Rendering
     raylib::Camera2D camera(
@@ -55,6 +53,11 @@ int main() {
 
     // Entity management
     EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
+    entityManager.registerBroadType(EntityBroadType::Character, typeid(combat::Character), typeid(core::Actor));
+
+    // Entities
+    entityManager.create<combat::Player>(raylib::Vector2{100, 150});
+    entityManager.create<combat::Enemy>(raylib::Vector2{200, 100});
 
     while (!window.ShouldClose()) {
         window.BeginDrawing();

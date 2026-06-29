@@ -6,6 +6,4 @@
 
 /// This is the header file for all combat stuff
 
-namespace combat {
-
-}
+namespace combat {}

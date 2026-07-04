@@ -9,6 +9,11 @@
 
 namespace combat {
     void Enemy::update() {
+        if (m_stunDuration > 0) {
+            m_stunDuration--;
+            return;
+        }
+
         // Get Player
         if (m_playerId == -1) {
             m_entityManager->breakableExecByType<Character>([&](const int id, const auto other) {
@@ -47,8 +52,15 @@ namespace combat {
         const float shootDist = m_radius + 5;
         const raylib::Vector2 aimPos = raylib::Vector2{std::cos(m_angle) * shootDist, std::sin(m_angle) * shootDist} + m_pos;
         aimPos.DrawCircle(1, WHITE);
-        // const raylib::Rectangle aimSrc{0, 0, 5, 7};
-        // const raylib::Rectangle aimDst{aimPos, {5, 7}};
-        // m_assetManager->getTex("aim_triangle").Draw(aimSrc, aimDst, {2, 3}, m_angle, WHITE);
+
+        if (const auto *player = m_entityManager->getAs<Player>(m_playerId)) {
+            if (canMelee(player->m_pos, player->m_radius)) {
+                DrawText("F", m_pos.x, m_pos.y - m_radius - 20, 16, WHITE);
+            }
+        }
+    }
+
+    [[nodiscard]] bool Enemy::canMelee(const raylib::Vector2 pos, const float radius) const {
+        return CheckCollisionCircles(m_pos, m_radius + 20, pos, radius);
     }
 }

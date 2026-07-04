@@ -24,24 +24,27 @@ namespace core {
                 m_fallingVel = 0;
 
                 // Check collision with each line
-                for (const auto &[a, b] : g.m_collisionLines) {
-                    const auto result = linesCollisionPoint(m_pos, delta, a, b);
-                    if (result.has_value()) {
-                        m_vel = 0;
-                    }
+                for (const auto line : g.m_collisionLines) {
+                    line.collideCircle(m_pos, 5);
                 }
+                // for (const auto &[a, b] : g.m_collisionLines) {
+                //     const auto result = linesCollisionPoint(m_pos, delta, a, b);
+                //     if (result.has_value()) {
+                //         m_vel = 0;
+                //     }
+                // }
             }
         }
 
-        if (m_fallingVel > 0) {
-            m_pos.y += m_fallingVel;
-            m_vel = 0;
-        } else {
-            m_animationBank[m_animationIndex].update();
-            m_pos += m_vel;
-            // m_vel /= 1.15;
-            m_vel /= 1.5;
-        }
+        // if (m_fallingVel > 0) {
+        //     m_pos.y += m_fallingVel;
+        //     m_vel = 0;
+        // } else {
+        m_animationBank[m_animationIndex].update();
+        m_pos += m_vel;
+        // m_vel /= 1.15;
+        m_vel /= 1.5;
+        // }
     }
 
     void Character::draw() const {
@@ -83,32 +86,20 @@ namespace core {
             degrees += 360.0f;
         }
 
-        const int directionIndex = static_cast<int>((degrees + 22.5f) / 45.0f) % 8;
+        const int directionIndex = static_cast<int>((degrees + 22.5f) / 45.0f) % 4;
         // Scale angle to 0-8
         switch (directionIndex) {
             case 0:
                 m_direction = Direction::Right;
                 break;
             case 1:
-                m_direction = Direction::DownRight;
-                break;
-            case 2:
                 m_direction = Direction::Down;
                 break;
-            case 3:
-                m_direction = Direction::DownLeft;
-                break;
-            case 4:
+            case 2:
                 m_direction = Direction::Left;
                 break;
-            case 5:
-                m_direction = Direction::UpLeft;
-                break;
-            case 6:
+            case 3:
                 m_direction = Direction::Up;
-                break;
-            case 7:
-                m_direction = Direction::UpRight;
                 break;
             default:
                 break;
@@ -119,20 +110,12 @@ namespace core {
         switch (m_direction) {
             case Direction::Right:
                 return 0;
-            case Direction::DownRight:
-                return 1;
             case Direction::Down:
-                return 2;
-            case Direction::DownLeft:
-                return 3;
+                return 1;
             case Direction::Left:
-                return 4;
-            case Direction::UpLeft:
-                return 5;
+                return 2;
             case Direction::Up:
-                return 6;
-            case Direction::UpRight:
-                return 7;
+                return 3;
         }
 
         return 0;
@@ -142,20 +125,12 @@ namespace core {
         switch (m_direction) {
             case Direction::Right:
                 return 0;
-            case Direction::DownRight:
-                return PI_Q;
             case Direction::Down:
                 return PI_Q * 2;
-            case Direction::DownLeft:
-                return PI_Q * 3;
             case Direction::Left:
                 return PI_Q * 4;
-            case Direction::UpLeft:
-                return PI_Q * 5;
             case Direction::Up:
                 return PI_Q * 6;
-            case Direction::UpRight:
-                return PI_Q * 7;
         }
 
         return 0;
@@ -165,20 +140,12 @@ namespace core {
         switch (m_direction) {
             case Direction::Right:
                 return {1, 0};
-            case Direction::DownRight:
-                return {1, 1};
             case Direction::Down:
                 return {0, 1};
-            case Direction::DownLeft:
-                return {-1, 1};
             case Direction::Left:
                 return {-1, 0};
-            case Direction::UpLeft:
-                return {-1, -1};
             case Direction::Up:
                 return {0, -1};
-            case Direction::UpRight:
-                return {1, -1};
         }
 
         return {};

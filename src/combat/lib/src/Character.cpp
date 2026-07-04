@@ -25,4 +25,8 @@ namespace combat {
             m_isDead = true;
         }
     }
+
+    void Character::stun(const int duration) {
+        m_stunDuration = duration;
+    }
 } // combat

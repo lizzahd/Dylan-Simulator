@@ -12,13 +12,9 @@
 namespace core {
     enum class Direction {
         Right,
-        DownRight,
         Down,
-        DownLeft,
         Left,
-        UpLeft,
         Up,
-        UpRight,
     };
 
     class Character : public Actor {

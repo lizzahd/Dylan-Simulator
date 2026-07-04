@@ -15,6 +15,7 @@ namespace combat {
 
         void update() override;
         void draw() const override;
+        [[nodiscard]] virtual bool canMelee(raylib::Vector2 pos, float radius) const;
 
         int m_playerId = -1;
 

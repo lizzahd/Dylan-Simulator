@@ -36,6 +36,8 @@ std::optional<raylib::Vector2> linesCollisionPoint(raylib::Vector2 pos1, raylib:
 struct Line {
     raylib::Vector2 a;
     raylib::Vector2 b;
+
+    bool collideCircle(raylib::Vector2 &pos, float radius) const;
 };
 
 // Integer position helper struct
@@ -76,3 +78,5 @@ constexpr IPos ADJACENT_8[8] = {
 
 // TODO: Make this more dynamic with mappable keys
 bool isInteractKeyPressed();
+
+bool collideLineCircle(raylib::Vector2 a, raylib::Vector2 b, raylib::Vector2 &pos, float radius);

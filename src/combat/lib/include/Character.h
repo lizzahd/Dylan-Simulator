@@ -23,10 +23,12 @@ namespace combat {
         }
 
         void hurt(int damage);
+        void stun(int duration);
 
         float m_radius;
         int m_maxHp;
         int m_hp;
         float m_angle = 0;
+        int m_stunDuration = 0;
     };
 } // combat

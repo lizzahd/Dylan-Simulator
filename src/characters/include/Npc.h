@@ -11,7 +11,7 @@ namespace core {
     public:
         explicit Npc(
             ENTITY_REQUIREMENTS,
-            const std::vector<Animation> &animationBank,
+            const std::vector<CharacterAnimation> &animationBank,
             const raylib::Vector2 pos,
             const raylib::Vector2 size)
             : Character(
@@ -26,7 +26,7 @@ namespace core {
     public:
         Dubi(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
         : Npc(ENTITY_PARAMETERS, std::vector{
-                Animation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+                CharacterAnimation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
             }, pos, {140, 140})
         {}
 

@@ -5,6 +5,7 @@
 
 #include <Actor.h>
 #include "Animation.h"
+#include "CharacterAnimation.h"
 #include "Interactable.h"
 
 #define FALLING_VELOCITY 3
@@ -22,7 +23,7 @@ namespace core {
         explicit Character(
             ENTITY_REQUIREMENTS,
             const EntityType entityType,
-            std::vector<Animation> animationBank,
+            std::vector<CharacterAnimation> animationBank,
             const raylib::Vector2 pos,
             const raylib::Vector2 size)
             : Actor(ENTITY_PARAMETERS, EntityBroadType::Character, entityType, pos, size)
@@ -46,12 +47,20 @@ namespace core {
         [[nodiscard]] bool isHovered() const;
         [[nodiscard]] virtual DialogueTextId getDialogue() const = 0;
 
+        /// Takes in a leader id, returns follower index
+        void follow(int id);
+        void stopFollow();
+
         raylib::Vector2 m_vel;
         int m_animationIndex = 0;
         Direction m_direction;
         float m_fallingVel = 0;
 
-        std::vector<Animation> m_animationBank;
+        std::vector<CharacterAnimation> m_animationBank;
         InteractableCallback m_callback;
+
+        int m_leader = -1;
+        int m_followerIndex = 0;
+        std::set<int> m_followers;
     };
 }

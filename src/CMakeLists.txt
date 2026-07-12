@@ -42,6 +42,8 @@ add_library(core_lib STATIC
         characters/include/Npc.h
         core/src/Dialogue.cpp
         core/include/Dialogue.h
+        characters/include/CharacterAnimation.h
+        characters/src/CharacterAnimation.cpp
 )
 
 target_link_libraries(core_lib PUBLIC hot_assets)

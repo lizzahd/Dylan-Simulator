@@ -15,10 +15,10 @@
 #include "GameManager.h"
 #include "Player.h"
 
+#define ROOMS_PATH "../../assets/rooms/"
+
 namespace fs = std::filesystem;
 using json = nlohmann::json;
-
-#define ROOMS_PATH "../../assets/rooms/"
 
 static core::DialogueTextId dialogueIdOffset = 10000;
 
@@ -30,9 +30,15 @@ void Geometry::drawDebug() const {
     }
 }
 
-Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, EntityManager *entityManager, GameManager *gameManager) {
+Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, EntityManager *entityManager, GameManager *gameManager, bool fullPath) {
     // Background Textures
-    for (const auto& entry : fs::directory_iterator(ROOMS_PATH + roomName)) {
+    std::string roomPath;
+    if (fullPath) {
+        roomPath = roomName;
+    } else {
+        roomPath = ROOMS_PATH + roomName;
+    }
+    for (const auto& entry : fs::directory_iterator(roomPath)) {
         fs::path path = entry.path();
         if (path.extension() != ".png") {
             continue;
@@ -59,7 +65,7 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, Enti
     }
 
     // Load geometry
-    std::ifstream f(ROOMS_PATH + roomName + "/map.json");
+    std::ifstream f(roomPath + "/map.json");
     const auto &j = json::parse(f);
 
     const auto &transitions = j["transitions"];
@@ -180,10 +186,10 @@ void Map::transition(const std::string &room, core::Player *player) {
     m_currentRoom = room;
 }
 
-void Map::load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager) {
+void Map::load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager, const bool fullPath) {
     std::set roomsToLoad{startRoomName};
     for (const auto &roomName : roomsToLoad) {
-        m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad, entityManager, gameManager));
+        m_rooms.emplace(roomName, std::make_shared<Room>(roomName, roomsToLoad, entityManager, gameManager, fullPath));
         dialogueIdOffset += 1000; // Buffer between rooms
     }
     m_currentRoom = startRoomName;

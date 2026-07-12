@@ -33,7 +33,7 @@ struct Geometry {
 struct Room {
     ~Room() = default;
     Room() = default;
-    explicit Room(const std::string &roomName, std::set<std::string> &roomsToLoad, EntityManager *entityManager, GameManager *gameManager);
+    explicit Room(const std::string &roomName, std::set<std::string> &roomsToLoad, EntityManager *entityManager, GameManager *gameManager, bool fullPath = false);
 
     void drawBackgroundLayers() const;
     void drawForegroundLayers() const;
@@ -65,7 +65,7 @@ public:
     void drawForegroundLayers() const;
     void drawDebug() const;
     void transition(const std::string &room, core::Player *player);
-    void load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager);
+    void load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager, bool fullPath = false);
     [[nodiscard]] std::vector<Geometry> &getGeometries() const;
     [[nodiscard]] std::optional<std::string> getTransitions(raylib::Vector2 pos) const;
 

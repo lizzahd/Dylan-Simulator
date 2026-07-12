@@ -21,8 +21,8 @@ namespace core {
                 ENTITY_PARAMETERS,
                 EntityType::Player,
                 {
-                    Animation(assetManager, "dylan_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
-                    Animation(assetManager, "dylan_walk", raylib::Vector2(140, 140), {70, 115}, 3, 9, true),
+                    CharacterAnimation(assetManager, "dylan_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+                    CharacterAnimation(assetManager, "dylan_walk", raylib::Vector2(140, 140), {70, 115}, 3, 9, true),
                 },
                 pos,
                 {140, 140})

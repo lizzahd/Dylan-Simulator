@@ -2,6 +2,9 @@
 // Created by xerox on 6/19/2026.
 //
 
+#define ASSETS_DIR "../../../assets/"
+#define ROOMS_DIR ASSETS_DIR"rooms/"
+
 #include <raylib-cpp.hpp>
 
 #include <hot_assets/AssetManager.h>
@@ -14,8 +17,6 @@
 #include "Button.h"
 #include "Npc.h"
 #include "Player.h"
-
-#define ASSETS_DIR "../../../assets/"
 
 #pragma region SelectLayer
 enum class SelectLayer : int {
@@ -107,8 +108,8 @@ int main() {
 
     // Map
     Map map;
-    map.m_currentRoom = "current";
-    map.m_rooms.emplace("current", std::make_shared<Room>());
+    // map.m_currentRoom = "current";
+    // map.m_rooms.emplace("current", std::make_shared<Room>());
 
     // Game State Management
     GameManager gameManager;
@@ -117,6 +118,8 @@ int main() {
     EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
     entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
     entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
+
+    map.load(ROOMS_DIR"lake", &entityManager, &gameManager, true);
     #pragma endregion GameInit
 
     #pragma region EditorInit

@@ -6,12 +6,30 @@
 #include <Utils.h>
 
 #include "GameManager.h"
+#include "../../gauntlet/include/GauntletCharacter.h"
+
+#define FOLLOW_DIST 64.0f
+#define FOLLOW_SPEED 5.0f
 
 namespace core {
     void Character::update() {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             if (isHovered() && canInteract()) {
                 m_gameManager->showDialogue(getDialogue());
+            }
+        }
+
+        if (const auto *leader = m_entityManager->getAs<Character>(m_leader)) {
+            if (m_pos.Distance(leader->m_pos) > FOLLOW_DIST) {
+                const auto targetPos = leader->m_pos + leader->getVector() * (-FOLLOW_DIST * 0.5f * static_cast<float>(m_followerIndex));
+                const auto d = (targetPos - m_pos).Normalize();
+                // if (abs(dx) > abs(dy)) {
+                //     m_pos.x += dx * FOLLOW_SPEED;
+                // } else {
+                //     m_pos.y += dy * FOLLOW_SPEED;
+                // }
+                m_vel = d * FOLLOW_SPEED;
+                m_direction = leader->m_direction;
             }
         }
 
@@ -68,6 +86,7 @@ namespace core {
             }
         }
         animation.draw(m_pos, getAngleIndex(), flags, effectParams);
+        DrawText(std::format("{}", m_followerIndex).c_str(), static_cast<int>(m_pos.x), static_cast<int>(m_pos.y - m_size.y), 16, WHITE);
     }
 
     void Character::drawDebug() const {
@@ -161,5 +180,26 @@ namespace core {
 
     bool Character::isHovered() const {
         return getRect().CheckCollision(GetMousePosition());
+    }
+
+    void Character::follow(const int id) {
+        if (auto *leader = m_entityManager->getAs<Character>(id)) {
+            leader->m_followers.insert(m_id);
+            m_followerIndex = static_cast<int>(leader->m_followers.size()) + 1;
+            m_leader = id;
+        }
+    }
+
+    void Character::stopFollow() {
+        if (auto *leader = m_entityManager->getAs<Character>(m_leader)) {
+            leader->m_followers.erase(m_id);
+            for (const auto id : leader->m_followers) {
+                if (auto *follower = m_entityManager->getAs<Character>(id)) {
+                    follower->follow(m_leader);
+                }
+            }
+        }
+        m_leader = -1;
+        m_followerIndex = 0;
     }
 }

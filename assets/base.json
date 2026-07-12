@@ -15,5 +15,21 @@
         "textDelay": 3
       }
     ]
+  },
+  "doodads": {
+    "tree1": {
+      "tex": "doodad_tree1",
+      "origin": {
+        "x": 152,
+        "y": 466
+      }
+    },
+    "tree2": {
+      "tex": "doodad_tree2",
+      "origin": {
+        "x": 112,
+        "y": 266
+      }
+    }
   }
 }

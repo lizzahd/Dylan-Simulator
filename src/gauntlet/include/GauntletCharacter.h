@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <GauntletUtils.h>
+#include "GauntletUtils.h"
 #include "Actor.h"
 #include "Animation.h"
 

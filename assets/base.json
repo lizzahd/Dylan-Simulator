@@ -14,6 +14,14 @@
         "options": [],
         "textDelay": 3
       }
+    ],
+    "dorian": [
+      {
+        "id": 200,
+        "text": "How's it goin'?",
+        "options": [],
+        "textDelay": 3
+      }
     ]
   },
   "doodads": {

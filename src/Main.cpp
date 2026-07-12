@@ -49,13 +49,15 @@ int main() {
 
     auto *player = entityManager.create<Player>(raylib::Vector2{300, 500});
 
-    // auto *dubi = entityManager.create<Dubi>(raylib::Vector2{200, 550});
-    // dubi->follow(player->m_id);
-    // dubi->m_leader = player->m_id;
-    for (int i = 0; i < 4; i++) {
-        auto *newDubi = entityManager.create<Dubi>(raylib::Vector2{200, 550 - static_cast<float>(i * 40)});
-        // newDubi->follow(player->m_id);
-    }
+    auto *dorian = entityManager.create<Dorian>(raylib::Vector2{200, 550});
+    dorian->follow(player->m_id);
+
+    auto *dubi = entityManager.create<Dubi>(raylib::Vector2{200, 550});
+    dubi->follow(player->m_id);
+    // for (int i = 0; i < 4; i++) {
+    //     auto *newDubi = entityManager.create<Dubi>(raylib::Vector2{200, 550 - static_cast<float>(i * 40)});
+    //     newDubi->follow(player->m_id);
+    // }
 
     raylib::RenderTexture viewport = LoadRenderTexture(1000, 1000);
     raylib::Vector2 viewportPos;

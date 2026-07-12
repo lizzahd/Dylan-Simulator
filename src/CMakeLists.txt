@@ -44,6 +44,8 @@ add_library(core_lib STATIC
         core/include/Dialogue.h
         characters/include/CharacterAnimation.h
         characters/src/CharacterAnimation.cpp
+        core/include/PolyAnimation.h
+        core/src/PolyAnimation.cpp
 )
 
 target_link_libraries(core_lib PUBLIC hot_assets)

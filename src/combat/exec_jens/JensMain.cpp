@@ -22,6 +22,9 @@
 #include <Actor.h>
 #include <GameManager.h>
 
+#include "PolyAnimation.h"
+#include "UI.h"
+
 #define ASSETS_DIR "../../../assets/"
 
 int main() {
@@ -56,17 +59,43 @@ int main() {
     // Entity management
     EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
 
+    // Combat UI
+    combat::UI combatUI;
+
+    std::vector<raylib::Vector2> t_startPoints = {
+        {10, 10}, // top letf
+        {10, 20}, // gottomg left
+        {20, 20}, // bottomg rioght
+        {20, 10} // top tigne
+    };
+
+    std::vector<raylib::Vector2> t_endPoints = {
+        {10, 10}, // top letf
+        {10, 500}, // gottomg left
+        {500, 500}, // bottomg rioght
+        {3, 10} // top tigne
+    };
+
+    core::PolyAnimation testPolyAnimation(t_startPoints, t_endPoints, 10, 10, true);
+
+    testPolyAnimation.play();
+
     while (!window.ShouldClose()) {
         window.BeginDrawing();
         window.ClearBackground(BLACK); // NOLINT
 
         // Map
-        map.drawBackgroundLayers();
+        // map.drawBackgroundLayers();
+        // combatUI.handleUI();
+        // combatUI.drawUI(&assetManager);
+
+        testPolyAnimation.update();
+        testPolyAnimation.draw();
 
         entityManager.updateAll();
         entityManager.drawAll();
 
-        map.drawForegroundLayers();
+        // map.drawForegroundLayers();
 
         window.EndDrawing();
     }

@@ -25,8 +25,9 @@ namespace core {
     class Dubi : public Npc {
     public:
         Dubi(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
-        : Npc(ENTITY_PARAMETERS, std::vector{
+        : Npc(ENTITY_PARAMETERS, {
                 CharacterAnimation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+                CharacterAnimation(assetManager, "dubi_walk", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
             }, pos, {140, 140})
         {}
 
@@ -35,7 +36,7 @@ namespace core {
             return raylib::Rectangle{m_pos.x + 48 - anim.m_origin.x, m_pos.y + 41 - anim.m_origin.y, 48, 80};
         }
 
-        DialogueTextId getDialogue() const override {
+        [[nodiscard]] DialogueTextId getDialogue() const override {
             return 100;
         }
     };

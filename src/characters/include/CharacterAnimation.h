@@ -27,10 +27,11 @@ namespace core {
             const int maxFrame,
             const int maxFrameTickDelay,
             const bool repeating)
-        : Animation(assetManager, maxFrame, maxFrameTickDelay, repeating)
+            : Animation(maxFrame, maxFrameTickDelay, repeating)
             , m_tex(std::move(tex))
             , m_size(size)
             , m_origin(origin)
+            , m_assetManager(assetManager)
         {}
 
         void draw(raylib::Vector2 pos, float ySrcOffset, int flags = ANIMATION_DRAW_FLAG_NONE, const AnimationEffectParams &effectParams = {}) const;
@@ -41,5 +42,7 @@ namespace core {
         std::string m_tex;
         raylib::Vector2 m_size;
         raylib::Vector2 m_origin;
+
+        AssetManager *m_assetManager;
     };
 }

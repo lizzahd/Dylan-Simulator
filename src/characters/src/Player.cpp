@@ -68,31 +68,27 @@ namespace core {
             m_direction = Direction::Up;
             m_animationIndex = ANIM_DYLAN_WALK;
             m_animationBank[m_animationIndex].m_playing = true;
-            return;
         }
         if (down) {
             m_vel.y = PLAYER_MOVE_SPEED;
             m_direction = Direction::Down;
             m_animationIndex = ANIM_DYLAN_WALK;
             m_animationBank[m_animationIndex].m_playing = true;
-            return;
         }
         if (left) {
             m_vel.x = -PLAYER_MOVE_SPEED;
             m_direction = Direction::Left;
             m_animationIndex = ANIM_DYLAN_WALK;
             m_animationBank[m_animationIndex].m_playing = true;
-            return;
         }
         if (right) {
             m_vel.x = PLAYER_MOVE_SPEED;
             m_direction = Direction::Right;
             m_animationIndex = ANIM_DYLAN_WALK;
             m_animationBank[m_animationIndex].m_playing = true;
-            return;
         }
 
-        if (m_animationIndex != ANIM_DYLAN_IDLE) {
+        if (m_animationIndex != ANIM_DYLAN_IDLE && !right && !left && !up && !down) {
             switchAnimation(ANIM_DYLAN_IDLE);
             m_animationBank[m_animationIndex].play();
         }

@@ -11,6 +11,11 @@
 #define FALLING_VELOCITY 3
 
 namespace core {
+    enum CharacterAnimState {
+        ANIM_GENERIC_IDLE,
+        ANIM_GENERIC_WALK,
+    };
+
     enum class Direction {
         Right,
         Down,

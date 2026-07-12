@@ -8,7 +8,7 @@
 #include "GameManager.h"
 #include "../../gauntlet/include/GauntletCharacter.h"
 
-#define FOLLOW_DIST 64.0f
+#define FOLLOW_DIST 32.0f
 #define FOLLOW_SPEED 5.0f
 
 namespace core {
@@ -16,20 +16,33 @@ namespace core {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             if (isHovered() && canInteract()) {
                 m_gameManager->showDialogue(getDialogue());
+
+                if (m_leader == -1) {
+                    // Find player
+                    m_entityManager->breakableExecByType<Character>([&](const int id, const auto *other) {
+                        if (other->m_entityType == EntityType::Player) {
+                            follow(id);
+                            return true;
+                        }
+
+                        return false;
+                    });
+                } else {
+                    stopFollow();
+                }
             }
         }
 
         if (const auto *leader = m_entityManager->getAs<Character>(m_leader)) {
-            if (m_pos.Distance(leader->m_pos) > FOLLOW_DIST) {
-                const auto targetPos = leader->m_pos + leader->getVector() * (-FOLLOW_DIST * 0.5f * static_cast<float>(m_followerIndex));
-                const auto d = (targetPos - m_pos).Normalize();
-                // if (abs(dx) > abs(dy)) {
-                //     m_pos.x += dx * FOLLOW_SPEED;
-                // } else {
-                //     m_pos.y += dy * FOLLOW_SPEED;
-                // }
-                m_vel = d * FOLLOW_SPEED;
-                m_direction = leader->m_direction;
+            const float index = static_cast<float>(m_followerIndex);
+            if (m_pos.Distance(leader->m_pos) > FOLLOW_DIST * index) {
+                const auto targetPos = leader->m_pos + leader->getVector() * (-FOLLOW_DIST * 0.5f * index);
+                setAngle(atan2f(targetPos.y - m_pos.y, targetPos.x - m_pos.x));
+                if (m_pos.Distance(targetPos) > 5) {
+                    const auto d = (targetPos - m_pos).Normalize();
+                    m_vel = d * FOLLOW_SPEED;
+                    m_direction = leader->m_direction;
+                }
             }
         }
 
@@ -45,24 +58,20 @@ namespace core {
                 for (const auto line : g.m_collisionLines) {
                     line.collideCircle(m_pos, 5);
                 }
-                // for (const auto &[a, b] : g.m_collisionLines) {
-                //     const auto result = linesCollisionPoint(m_pos, delta, a, b);
-                //     if (result.has_value()) {
-                //         m_vel = 0;
-                //     }
-                // }
             }
         }
 
-        // if (m_fallingVel > 0) {
-        //     m_pos.y += m_fallingVel;
-        //     m_vel = 0;
-        // } else {
+        if (abs(m_vel.x) > 0.1f || abs(m_vel.y) > 0.1f) {
+            m_animationIndex = ANIM_GENERIC_WALK;
+            m_animationBank[m_animationIndex].m_playing = true;
+        } else {
+            m_animationIndex = ANIM_GENERIC_IDLE;
+            m_animationBank[m_animationIndex].m_playing = true;
+        }
+
         m_animationBank[m_animationIndex].update();
         m_pos += m_vel;
-        // m_vel /= 1.15;
         m_vel /= 1.5;
-        // }
     }
 
     void Character::draw() const {
@@ -86,7 +95,6 @@ namespace core {
             }
         }
         animation.draw(m_pos, getAngleIndex(), flags, effectParams);
-        DrawText(std::format("{}", m_followerIndex).c_str(), static_cast<int>(m_pos.x), static_cast<int>(m_pos.y - m_size.y), 16, WHITE);
     }
 
     void Character::drawDebug() const {

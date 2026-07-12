@@ -16,12 +16,10 @@ namespace core {
     public:
         ~Animation() = default;
         explicit Animation(
-            AssetManager *assetManager,
             const int maxFrame,
             const int maxFrameTickDelay,
             const bool repeating)
-            : m_assetManager(assetManager)
-            , m_maxFrame(maxFrame)
+            : m_maxFrame(maxFrame)
             , m_maxFrameTickDelay(maxFrameTickDelay)
             , m_repeating(repeating)
         {}
@@ -33,7 +31,6 @@ namespace core {
         int m_currentFrame = 0;
         int m_currentFrameTickDelay = 0;
         bool m_playing = false;
-        AssetManager *m_assetManager;
 
         int m_maxFrame;
         int m_maxFrameTickDelay;

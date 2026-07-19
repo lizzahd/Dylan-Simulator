@@ -46,21 +46,6 @@ namespace core {
             }
         }
 
-        // Check which geometry we're in
-        const auto delta = m_pos + m_vel;
-        m_fallingVel = FALLING_VELOCITY;
-        for (const auto &g : m_map->getGeometries()) {
-            if (CheckCollisionPointPoly(m_pos, g.m_vertices.data(), g.m_vertices.size())) {
-                // This is the one
-                m_fallingVel = 0;
-
-                // Check collision with each line
-                for (const auto line : g.m_collisionLines) {
-                    line.collideCircle(m_pos, 5);
-                }
-            }
-        }
-
         if (abs(m_vel.x) > 0.1f || abs(m_vel.y) > 0.1f) {
             m_animationIndex = ANIM_GENERIC_WALK;
             m_animationBank[m_animationIndex].m_playing = true;

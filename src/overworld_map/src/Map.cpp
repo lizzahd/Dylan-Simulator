@@ -85,24 +85,6 @@ Room::Room(const std::string& roomName, std::set<std::string> &roomsToLoad, Enti
         m_entrances.emplace(entrance["name"], raylib::Vector2{entrance["x"], entrance["y"]});
     }
 
-    for (const auto &g : j["areas"]) {
-        const auto &points = g["points"];
-        std::vector<raylib::Vector2> rPoints;
-        for (const auto &p : points) {
-            rPoints.emplace_back(p["x"], p["y"]);
-        }
-
-        std::vector<Line> rCollisionLines;
-        const auto &collisionLines = g["collisionLines"];
-        for (const auto &line : collisionLines) {
-            const raylib::Vector2 pos1(line["a"]["x"], line["a"]["y"]);
-            const raylib::Vector2 pos2(line["b"]["x"], line["b"]["y"]);
-            rCollisionLines.emplace_back(pos1, pos2);
-        }
-
-        m_geometries.emplace_back(rPoints, rCollisionLines);
-    }
-
     for (const auto &interactable : j["interactables"]) {
         std::string tex = interactable["tex"];
         entityManager->create<core::Interactable>(tex, raylib::Vector2(interactable["x"], interactable["y"]), static_cast<int>(interactable["dialogueId"]) + dialogueIdOffset);
@@ -148,12 +130,16 @@ void Room::drawForegroundLayers() const {
 }
 
 void Room::drawDebug() const {
-    for (const auto &geometry : m_geometries) {
-        geometry.drawDebug();
+    for (const auto [a, b] : m_collisionLines) {
+        a.DrawLine(b, 2, RED);
     }
 
-    for (const auto hitbox : m_hitboxes) {
-        hitbox.DrawLines(RED);
+    for (const auto [pos, radius] : m_collisionCircles) {
+        DrawCircleLinesV(pos, radius, RED);
+    }
+
+    for (const auto rect : m_collisionRects) {
+        DrawRectangleLinesEx(rect, 2, RED);
     }
 }
 
@@ -165,6 +151,10 @@ std::optional<std::string> Room::getTransitions(const raylib::Vector2 pos) const
     }
 
     return std::nullopt;
+}
+
+void Room::save(const std::string &path) const {
+    // TODO
 }
 
 void Map::drawBackgroundLayers() const {
@@ -195,10 +185,10 @@ void Map::load(const std::string &startRoomName, EntityManager *entityManager, G
     m_currentRoom = startRoomName;
 }
 
-std::vector<Geometry> &Map::getGeometries() const {
-    return m_rooms.at(m_currentRoom)->m_geometries;
-}
-
 std::optional<std::string> Map::getTransitions(const raylib::Vector2 pos) const {
     return m_rooms.at(m_currentRoom)->getTransitions(pos);
+}
+
+std::shared_ptr<Room> Map::getCurrentRoom() {
+    return m_rooms.at(m_currentRoom);
 }

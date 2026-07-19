@@ -40,6 +40,12 @@ struct Line {
     bool collideCircle(raylib::Vector2 &pos, float radius) const;
 };
 
+
+struct Circle {
+    raylib::Vector2 pos;
+    float radius;
+};
+
 // Integer position helper struct
 struct IPos {
     int x;

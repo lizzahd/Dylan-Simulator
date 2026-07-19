@@ -14,6 +14,7 @@
 #include <raylib-cpp/Texture.hpp>
 
 struct Line;
+struct Circle;
 class EntityManager;
 
 namespace core {
@@ -39,6 +40,7 @@ struct Room {
     void drawForegroundLayers() const;
     void drawDebug() const;
     [[nodiscard]] std::optional<std::string> getTransitions(raylib::Vector2 pos) const;
+    void save(const std::string &path) const;
 
     // The key is the id of the previous area
     std::unordered_map<std::string, raylib::Vector2> m_entrances;
@@ -46,13 +48,14 @@ struct Room {
     // The key is the id of the area it takes you to
     std::unordered_map<std::string, Geometry> m_transitions;
 
-    std::vector<raylib::Rectangle> m_hitboxes;
     std::vector<raylib::Texture2D> m_backgroundLayers;
     std::vector<raylib::Texture2D> m_foregroundLayers;
     std::vector<raylib::Texture2D> m_backgroundParallaxLayers;
 
-    // Physics and shite
-    std::vector<Geometry> m_geometries;
+    // NEW COLLISION
+    std::vector<Line> m_collisionLines;
+    std::vector<Circle> m_collisionCircles;
+    std::vector<raylib::Rectangle> m_collisionRects;
 };
 
 /// Not in namespace core because it's passed as a parameter into entityManager
@@ -66,8 +69,8 @@ public:
     void drawDebug() const;
     void transition(const std::string &room, core::Player *player);
     void load(const std::string &startRoomName, EntityManager *entityManager, GameManager *gameManager, bool fullPath = false);
-    [[nodiscard]] std::vector<Geometry> &getGeometries() const;
     [[nodiscard]] std::optional<std::string> getTransitions(raylib::Vector2 pos) const;
+    std::shared_ptr<Room> getCurrentRoom();
 
     // Area transitioning
     std::unordered_map<std::string, std::shared_ptr<Room>> m_rooms;

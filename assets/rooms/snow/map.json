@@ -1,0 +1,29 @@
+{
+  "entrances": [],
+  "transitions": [],
+  "areas": [
+    {
+      "collisionLines": [],
+      "points": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 720,
+          "y": 0
+        },
+        {
+          "x": 720,
+          "y": 720
+        },
+        {
+          "x": 0,
+          "y": 720
+        }
+      ]
+    }
+  ],
+  "interactables": [],
+  "dialogue": []
+}

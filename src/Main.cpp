@@ -16,8 +16,8 @@ using namespace core;
 int main() {
     // Initialize raylib
     SetTraceLogLevel(LOG_WARNING);
-    constexpr int width = 1152;
-    constexpr int height = 648;
+    constexpr int width = VIEWPORT_WIDTH;
+    constexpr int height = VIEWPORT_HEIGHT;
     raylib::Window window(width, height, "Dylan Simulator", FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);
     SetExitKey(0);
@@ -45,7 +45,7 @@ int main() {
     entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
     entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
 
-    map.load("lake", &entityManager, &gameManager);
+    map.load("snow", &entityManager, &gameManager);
 
     auto *player = entityManager.create<Player>(raylib::Vector2{300, 500});
 
@@ -59,7 +59,7 @@ int main() {
     //     newDubi->follow(player->m_id);
     // }
 
-    raylib::RenderTexture viewport = LoadRenderTexture(1000, 1000);
+    raylib::RenderTexture viewport = LoadRenderTexture(width, height);
     raylib::Vector2 viewportPos;
 
     float pixelation = 2048;
@@ -76,8 +76,10 @@ int main() {
         // SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
         // BeginShaderMode(shader);
 
-        // BeginTextureMode(viewport);
-        // ClearBackground(BLACK); // NOLINT
+        viewportPos = player->m_pos + raylib::Vector2{-static_cast<float>(width) / 2, static_cast<float>(height) / 2};
+
+        BeginTextureMode(viewport);
+        ClearBackground(BLACK); // NOLINT
 
         // Control
         const raylib::Vector2 mousePos = camera.GetScreenToWorld(GetMousePosition());
@@ -127,21 +129,21 @@ int main() {
         gameManager.update();
         gameManager.draw();
 
-        // EndTextureMode();
+        EndTextureMode();
 
-        // const float heightRatio = std::min(static_cast<float>(GetScreenHeight()) / VIEWPORT_HEIGHT, static_cast<float>(GetScreenHeight()));
-        // const float newWidth = VIEWPORT_WIDTH * heightRatio;
-        // const float newHeight = VIEWPORT_HEIGHT * heightRatio;
-        // const float imageX = GetScreenWidth() / 2 - newWidth / 2;
-        // DrawTexturePro(
-        //     viewport.texture,
-        //     raylib::Rectangle{viewportPos.x, viewportPos.y, VIEWPORT_WIDTH, -VIEWPORT_HEIGHT},
-        //     raylib::Rectangle{0, 0, newWidth, static_cast<float>(GetScreenHeight())},
-        //     {0, 0},
-        //     0,
-        //     WHITE
-        // );
-        // DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
+        const float heightRatio = std::min(static_cast<float>(GetScreenHeight()) / VIEWPORT_HEIGHT, static_cast<float>(GetScreenHeight()));
+        const float newWidth = VIEWPORT_WIDTH * heightRatio;
+        const float newHeight = VIEWPORT_HEIGHT * heightRatio;
+        const float imageX = GetScreenWidth() / 2 - newWidth / 2;
+        DrawTexturePro(
+            viewport.texture,
+            raylib::Rectangle{viewportPos.x, -viewportPos.y, VIEWPORT_WIDTH, -VIEWPORT_HEIGHT},
+            raylib::Rectangle{imageX, 0, newWidth, static_cast<float>(GetScreenHeight())},
+            {0, 0},
+            0,
+            WHITE
+        );
+        DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
 
         // EndShaderMode();
 

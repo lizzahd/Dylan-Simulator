@@ -65,13 +65,11 @@ void GameManager::draw() const {
     if (m_dialogueTextId != DIALOGUE_TEXT_ID_CLOSE) {
         const core::DialogueText &dialogueText = m_dialogueTextMap.at(m_dialogueTextId);
         // Get textbox width
-        const float width = GetScreenWidth();
-        const float height = GetScreenHeight();
         const raylib::Rectangle textBox{
-            10,
-            height - height / 3 - 10,
-            width - 20,
-            height / 3
+            5,
+            VIEWPORT_HEIGHT - VIEWPORT_HEIGHT / 3 - 10,
+            VIEWPORT_WIDTH - 10,
+            VIEWPORT_HEIGHT / 3
         };
         DrawRectangleRounded(textBox, 0.15, 0, BLACK);
         DrawRectangleRoundedLines(textBox, 0.15, 0, WHITE);

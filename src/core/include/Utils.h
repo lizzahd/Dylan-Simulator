@@ -8,8 +8,8 @@
 #include <raylib-cpp/Rectangle.hpp>
 #include <raylib-cpp/Vector2.hpp>
 
-#define VIEWPORT_WIDTH  723
-#define VIEWPORT_HEIGHT 406
+#define VIEWPORT_WIDTH  640
+#define VIEWPORT_HEIGHT 480
 
 #define PI_Q (PI / 4)
 #define PI_H (PI / 2)
@@ -17,6 +17,10 @@
 
 #define CHUNK_SIZE 64
 #define CHUNK_SIZE_H (CHUNK_SIZE / 2)
+
+namespace raylib {
+    class Camera2D;
+}
 
 static bool inDebugMode = false;
 
@@ -86,3 +90,5 @@ constexpr IPos ADJACENT_8[8] = {
 bool isInteractKeyPressed();
 
 bool collideLineCircle(raylib::Vector2 a, raylib::Vector2 b, raylib::Vector2 &pos, float radius);
+
+raylib::Vector2 getScaledMousePos(raylib::Camera2D &worldCamera, raylib::Camera2D &screenCamera);

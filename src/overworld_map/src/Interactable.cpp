@@ -13,6 +13,7 @@
 #include <Actor.h>
 
 #include "GameManager.h"
+#include "Utils.h"
 
 namespace core {
     void Interactable::update() {
@@ -79,7 +80,7 @@ namespace core {
     bool Interactable::isHovered() const {
         // Check if mouse position on pixel
         // This might be expensive
-        const auto [mx, my] = GetMousePosition();
+        const auto [mx, my] = getScaledMousePos(*m_res->worldCamera, *m_res->screenCamera);
         const int x = static_cast<int>(mx - m_pos.x);
         const int y = static_cast<int>(my - m_pos.y);
         if (x < 0 || x >= m_size.x || y < 0 || y >= m_size.y) {

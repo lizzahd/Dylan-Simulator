@@ -172,7 +172,7 @@ namespace core {
     }
 
     bool Character::isHovered() const {
-        return getRect().CheckCollision(GetMousePosition());
+        return getRect().CheckCollision(getScaledMousePos(*m_res->worldCamera, *m_res->screenCamera));
     }
 
     void Character::follow(const int id) {

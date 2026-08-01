@@ -16,8 +16,10 @@ using namespace core;
 int main() {
     // Initialize raylib
     SetTraceLogLevel(LOG_WARNING);
-    constexpr int width = VIEWPORT_WIDTH;
-    constexpr int height = VIEWPORT_HEIGHT;
+    int width = 1280;
+    int height = 960;
+    constexpr int viewportWidth = VIEWPORT_WIDTH;
+    constexpr int viewportHeight = VIEWPORT_HEIGHT;
     raylib::Window window(width, height, "Dylan Simulator", FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);
     SetExitKey(0);
@@ -27,11 +29,24 @@ int main() {
     assetManager.loadTextures("../../assets/textures");
     assetManager.loadShaders("../../assets/shaders");
 
-    // Rendering
-    raylib::Camera2D camera(
-        raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2),
-        raylib::Vector2(static_cast<float>(width) / 2, static_cast<float>(height) / 2)
-    );
+    float virtualRatio = static_cast<float>(width) / static_cast<float>(height);
+
+    // Why does setting everything manually like this work?
+    raylib::Camera2D worldCamera;
+    worldCamera.offset = Vector2{0, 0};
+    worldCamera.target = Vector2{0, 0};
+    worldCamera.rotation = 0;
+    worldCamera.zoom = 1.0f;
+
+    raylib::Camera2D screenCamera{};
+    screenCamera.offset = Vector2{0, 0};
+    screenCamera.target = Vector2{0, 0};
+    screenCamera.rotation = 0;
+    screenCamera.zoom = 1.0f;
+
+    raylib::RenderTexture target = LoadRenderTexture(viewportWidth, viewportHeight);
+    raylib::Rectangle src = {0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height)};
+    raylib::Vector2 origin = {0.0f, 0.0f};
 
     // Map
     Map map;
@@ -40,8 +55,13 @@ int main() {
     GameManager gameManager;
     gameManager.init();
 
+    EntityResources entityRes {
+        .screenCamera = &screenCamera,
+        .worldCamera = &worldCamera,
+    };
+
     // Entity management
-    EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
+    EntityManager entityManager(&assetManager, &entityRes, &map, &gameManager);
     entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
     entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
 
@@ -54,102 +74,57 @@ int main() {
 
     auto *dubi = entityManager.create<Dubi>(raylib::Vector2{200, 550});
     dubi->follow(player->m_id);
-    // for (int i = 0; i < 4; i++) {
-    //     auto *newDubi = entityManager.create<Dubi>(raylib::Vector2{200, 550 - static_cast<float>(i * 40)});
-    //     newDubi->follow(player->m_id);
-    // }
-
-    raylib::RenderTexture viewport = LoadRenderTexture(width, height);
-    raylib::Vector2 viewportPos;
-
-    float pixelation = 2048;
 
     while (!window.ShouldClose()) {
-        camera.target = player->m_pos;
-        window.BeginDrawing();
+        width = GetScreenWidth();
+        height = GetScreenHeight();
+        raylib::Rectangle dst = {0, 0, static_cast<float>(width), static_cast<float>(height)};
 
-        window.ClearBackground(BLACK); // NOLINT
+        BeginTextureMode(target);
+            ClearBackground(BLACK);
+            BeginMode2D(worldCamera);
+                map.drawBackgroundLayers();
 
-        // pixelation += GetMouseWheelMove() * 10;
-        // const auto &shader = assetManager.getShader("pixelate");
-        // const int pixelsLoc = shader.GetLocation("pixels");
-        // SetShaderValue(shader, pixelsLoc, &pixelation, RL_SHADER_UNIFORM_FLOAT);
-        // BeginShaderMode(shader);
+                if (!gameManager.m_paused) {
+                    entityManager.updateAll();
+                }
 
-        viewportPos = player->m_pos + raylib::Vector2{-static_cast<float>(width) / 2, static_cast<float>(height) / 2};
+                // TODO: Optimize!!!
+                std::vector<int> entityIds = entityManager.getEntitiesByType<Actor>();
+                std::ranges::sort(entityIds, [&](const int a, const int b) {
+                    const auto *entityA = entityManager.getAs<Actor>(a);
+                    const auto *entityB = entityManager.getAs<Actor>(b);
+                    return entityA->m_pos.y < entityB->m_pos.y;
+                });
+                for (const int id : entityIds) {
+                    const auto *entity = entityManager.getAs<Actor>(id);
+                    entity->draw();
+                }
 
-        BeginTextureMode(viewport);
-        ClearBackground(BLACK); // NOLINT
+                map.drawForegroundLayers();
 
-        // Control
-        const raylib::Vector2 mousePos = camera.GetScreenToWorld(GetMousePosition());
-        if (IsKeyPressed(KEY_GRAVE)) {
-            inDebugMode = !inDebugMode;
-        }
+                gameManager.update();
 
-        // Map
-        map.drawBackgroundLayers();
-        if (inDebugMode) {
-            map.drawDebug();
-        }
+                screenCamera.target.x = player->m_pos.x - static_cast<float>(viewportWidth) / 2;
+                screenCamera.target.y = player->m_pos.y - static_cast<float>(viewportHeight) / 2;
 
-        // Zero
-        raylib::Vector2().DrawCircle(2, RED);
+                worldCamera.target.x = truncf(screenCamera.target.x);
+                screenCamera.target.x -= worldCamera.target.x;
+                screenCamera.target.x *= virtualRatio;
 
-        // Update entities and stuff
-        if (!gameManager.m_paused) {
-            entityManager.updateAll();
-        }
-        // entityManager->drawAll();
+                worldCamera.target.y = truncf(screenCamera.target.y);
+                screenCamera.target.y -= worldCamera.target.y;
+                screenCamera.target.y *= virtualRatio;
+            EndMode2D();
 
-        // TODO: Optimize!!!
-        std::vector<int> entityIds = entityManager.getEntitiesByType<Actor>();
-        std::ranges::sort(entityIds, [&](const int a, const int b) {
-            const auto *entityA = entityManager.getAs<Actor>(a);
-            const auto *entityB = entityManager.getAs<Actor>(b);
-            return entityA->m_pos.y < entityB->m_pos.y;
-        });
-        for (const int id : entityIds) {
-            const auto *entity = entityManager.getAs<Actor>(id);
-            entity->draw();
-        }
-
-        map.drawForegroundLayers();
-
-        // UI Scheisse
-        if (inDebugMode) {
-            DrawText(std::format("Angle Index: {}", player->getAngleIndex()).c_str(), 0, 0, 14, LIME);
-        }
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)) {
-            viewportPos.x -= GetMouseDelta().x;
-            viewportPos.y += GetMouseDelta().y;
-        }
-
-        gameManager.update();
-        gameManager.draw();
-
+            gameManager.draw();
         EndTextureMode();
 
-        const float heightRatio = std::min(static_cast<float>(GetScreenHeight()) / VIEWPORT_HEIGHT, static_cast<float>(GetScreenHeight()));
-        const float newWidth = VIEWPORT_WIDTH * heightRatio;
-        const float newHeight = VIEWPORT_HEIGHT * heightRatio;
-        const float imageX = GetScreenWidth() / 2 - newWidth / 2;
-        DrawTexturePro(
-            viewport.texture,
-            raylib::Rectangle{viewportPos.x, -viewportPos.y, VIEWPORT_WIDTH, -VIEWPORT_HEIGHT},
-            raylib::Rectangle{imageX, 0, newWidth, static_cast<float>(GetScreenHeight())},
-            {0, 0},
-            0,
-            WHITE
-        );
-        DrawRectangleLines(imageX, 0, newWidth, newHeight, RED);
-
-        // EndShaderMode();
-
-        DrawFPS(5, 5);
-
-        window.EndDrawing();
+        BeginDrawing();
+            ClearBackground(BLACK); // NOLINT
+            DrawTexturePro(target.texture, src, dst, origin, 0.0f, WHITE);
+            DrawFPS(4, 4);
+        EndDrawing();
     }
 
     return 0;

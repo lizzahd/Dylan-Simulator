@@ -3,6 +3,7 @@
 //
 
 #include <Utils.h>
+#include <raylib-cpp/Camera2D.hpp>
 
 bool lineRecCollision(const raylib::Vector2 pos1, const raylib::Vector2 pos2, const raylib::Rectangle rec) {
     const bool left    = CheckCollisionLines(pos1, pos2, rec.GetPosition(), {rec.x, rec.y + rec.height}, nullptr);
@@ -68,4 +69,14 @@ bool collideLineCircle(const raylib::Vector2 a, const raylib::Vector2 b, raylib:
     }
 
     return false;
+}
+
+raylib::Vector2 getScaledMousePos(raylib::Camera2D &worldCamera, raylib::Camera2D &screenCamera) {
+    // raylib::Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), screenCamera);
+    // mousePos.x = (mousePos.x / static_cast<float>(GetScreenWidth())) * VIEWPORT_WIDTH + worldCamera.target.x;
+    // mousePos.y = (mousePos.y / static_cast<float>(GetScreenHeight())) * -VIEWPORT_HEIGHT + worldCamera.target.y;
+    raylib::Vector2 mousePos = GetScreenToWorld2D(GetMousePosition(), screenCamera);
+    mousePos.x = (mousePos.x / GetScreenWidth()) * VIEWPORT_WIDTH + worldCamera.target.x;
+    mousePos.y = (mousePos.y / GetScreenHeight()) * VIEWPORT_HEIGHT + worldCamera.target.y;
+    return mousePos;
 }

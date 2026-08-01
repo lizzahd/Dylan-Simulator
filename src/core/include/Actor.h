@@ -20,7 +20,7 @@
 #define ENTITY_PARAMETERS   id, \
                             entityManager, \
                             assetManager, \
-                            camera, \
+                            res, \
                             map, \
                             gameManager
 
@@ -55,7 +55,7 @@ namespace core {
             , m_entityBroadType(broadEntityType)
             , m_entityManager(entityManager)
             , m_assetManager(assetManager)
-            , m_camera(camera)
+            , m_res(res)
             , m_map(map)
             , m_gameManager(gameManager)
         {}
@@ -119,7 +119,7 @@ namespace core {
         EntityBroadType m_entityBroadType;
         EntityManager *m_entityManager;
         AssetManager *m_assetManager;
-        Camera2D *m_camera;
+        EntityResources *m_res;
         Map *m_map;
         GameManager *m_gameManager;
         int m_layer = 1;

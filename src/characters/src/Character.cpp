@@ -164,7 +164,7 @@ namespace core {
     }
 
     void Character::interact() const {
-        m_callback(ENTITY_MEMBERS);
+        m_callback(m_id, m_iLocals);
     }
 
     bool Character::canInteract() const {
@@ -172,7 +172,7 @@ namespace core {
     }
 
     bool Character::isHovered() const {
-        return getRect().CheckCollision(getScaledMousePos(*m_res->worldCamera, *m_res->screenCamera));
+        return getRect().CheckCollision(getScaledMousePos(*m_worldCamera, *m_screenCamera));
     }
 
     void Character::follow(const int id) {

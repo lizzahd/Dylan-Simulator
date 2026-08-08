@@ -34,7 +34,7 @@ namespace combat {
         // Melee Attack
         if (IsKeyPressed(KEY_F)) {
             m_entityManager->breakableExecByType<Character>([&](const int id, auto other) {
-                if (other->getType() != EntityType::Enemy) {
+                if (other->getType() != static_cast<int>(EntityType::Enemy)) {
                     return false;
                 }
                 const auto enemy = dynamic_cast<Enemy *>(other);

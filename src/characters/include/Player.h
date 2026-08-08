@@ -15,18 +15,21 @@ namespace core {
     class Player : public Character {
     public:
         explicit Player(
-            ENTITY_REQUIREMENTS,
+            const int id,
+            ILocals *iLocals,
             const raylib::Vector2 pos)
             : Character(
-                ENTITY_PARAMETERS,
+                id,
+                iLocals,
                 EntityType::Player,
-                {
-                    CharacterAnimation(assetManager, "dylan_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
-                    CharacterAnimation(assetManager, "dylan_walk", raylib::Vector2(140, 140), {70, 115}, 3, 9, true),
-                },
+                {},
                 pos,
-                {140, 140})
-        {}
+                {140, 140}) {
+            m_animationBank = {
+                CharacterAnimation(m_assetManager, "dylan_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+                CharacterAnimation(m_assetManager, "dylan_walk", raylib::Vector2(140, 140), {70, 115}, 3, 9, true),
+            };
+        }
 
         void draw() const override;
         void update() override;

@@ -8,7 +8,7 @@
 namespace combat {
     void Projectile::update() {
         m_entityManager->breakableExecByType<Character>([&](int, auto other) {
-            if (other->getType() != m_target) {
+            if (other->getType() != static_cast<int>(m_target)) {
                 return false;
             }
 

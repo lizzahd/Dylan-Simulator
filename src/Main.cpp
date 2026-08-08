@@ -1,5 +1,6 @@
 #include <raylib-cpp.hpp>
 
+#include <hot_entities/EntityManager.hpp>
 #include <hot_assets/AssetManager.h>
 
 #include <Utils.h>
@@ -8,6 +9,7 @@
 #include <Interactable.h>
 #include <Actor.h>
 #include <GameManager.h>
+#include <EntityTypes.h>
 
 #include "Npc.h"
 
@@ -55,15 +57,21 @@ int main() {
     GameManager gameManager;
     gameManager.init();
 
-    EntityResources entityRes {
-        .screenCamera = &screenCamera,
-        .worldCamera = &worldCamera,
-    };
-
     // Entity management
-    EntityManager entityManager(&assetManager, &entityRes, &map, &gameManager);
-    entityManager.registerBroadType(EntityBroadType::Character, typeid(Character), typeid(Actor));
-    entityManager.registerBroadType(EntityBroadType::Interactable, typeid(Interactable), typeid(Actor));
+    EntityManager entityManager;
+    entityManager.registerBroadType(static_cast<int>(EntityBroadType::Character), typeid(Character), typeid(Actor));
+    entityManager.registerBroadType(static_cast<int>(EntityBroadType::Interactable), typeid(Interactable), typeid(Actor));
+
+    // Initialize locals and entity manager
+    Locals locals {
+        &entityManager,
+        &assetManager,
+        &screenCamera,
+        &worldCamera,
+        &map,
+        &gameManager,
+    };
+    entityManager.init(&locals);
 
     map.load("snow", &entityManager, &gameManager);
 

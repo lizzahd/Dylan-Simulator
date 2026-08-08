@@ -26,13 +26,17 @@ namespace core {
             const raylib::Vector2 &origin,
             const int maxFrame,
             const int maxFrameTickDelay,
-            const bool repeating)
+            const bool repeating = false,
+            const bool autoPlay = true)
             : Animation(maxFrame, maxFrameTickDelay, repeating)
             , m_tex(std::move(tex))
             , m_size(size)
             , m_origin(origin)
-            , m_assetManager(assetManager)
-        {}
+            , m_assetManager(assetManager) {
+            if (autoPlay) {
+                m_playing = true;
+            }
+        }
 
         void draw(raylib::Vector2 pos, float ySrcOffset, int flags = ANIMATION_DRAW_FLAG_NONE, const AnimationEffectParams &effectParams = {}) const;
         void draw(raylib::Vector2 pos, int flags = ANIMATION_DRAW_FLAG_NONE, const AnimationEffectParams &effectParams = {}) const;

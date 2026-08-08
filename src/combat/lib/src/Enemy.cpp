@@ -17,7 +17,7 @@ namespace combat {
         // Get Player
         if (m_playerId == -1) {
             m_entityManager->breakableExecByType<Character>([&](const int id, const auto other) {
-                if (other->getType() == EntityType::Player) {
+                if (other->getType() == static_cast<int>(EntityType::Player)) {
                     m_playerId = id;
                     return true;
                 }

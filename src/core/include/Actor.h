@@ -4,45 +4,25 @@
 
 #pragma once
 
-#include <iostream>
 #include <raylib-cpp.hpp>
 
 #include <Map.h>
-#include <EntityManagerExternal.h>
-
-// This is for the entity manager, which always hands these to the entity upon creation,
-// so we don't need to worry about it.
-// The macro just makes this easier to deal with
-#define ENTITY_REQUIREMENTS const int id, \
-                            EntityManager *entityManager, \
-                            ENTITY_MANAGER_REQUIREMENTS
-
-#define ENTITY_PARAMETERS   id, \
-                            entityManager, \
-                            assetManager, \
-                            res, \
-                            map, \
-                            gameManager
-
-#define ENTITY_MEMBERS      m_id, \
-                            m_entityManager, \
-                            ENTITY_MANAGER_MEMBERS
+#include <EntityTypes.h>
 
 #include <hot_entities/IEntity.hpp>
-#include <hot_entities/EntityManager.hpp>
 
 namespace raylib {
     class Rectangle;
 }
 
-class EntityManager;
 class AssetManager;
 
 namespace core {
     class Actor : public IEntity {
     public:
         explicit Actor(
-            ENTITY_REQUIREMENTS,
+            const int id,
+            ILocals *iLocals,
             const EntityBroadType broadEntityType,
             const EntityType entityType,
             const raylib::Vector2 pos,
@@ -53,12 +33,15 @@ namespace core {
             , m_entityType(entityType)
             , m_id(id)
             , m_entityBroadType(broadEntityType)
-            , m_entityManager(entityManager)
-            , m_assetManager(assetManager)
-            , m_res(res)
-            , m_map(map)
-            , m_gameManager(gameManager)
-        {}
+            , m_iLocals(iLocals) {
+            auto *locals = dynamic_cast<Locals *>(iLocals);
+            m_entityManager = (EntityManager *) locals->entityManager; // NOLINT Why do I need to c-cast this shit? What the hell?
+            m_assetManager = locals->assetManager;
+            m_screenCamera = locals->screenCamera;
+            m_worldCamera = locals->worldCamera;
+            m_map = locals->map;
+            m_gameManager = locals->gameManager;
+        }
 
         ~Actor() override = default;
 
@@ -78,12 +61,12 @@ namespace core {
             return m_id;
         }
 
-        [[nodiscard]] EntityType getType() const override {
-            return m_entityType;
+        [[nodiscard]] int getType() const override {
+            return static_cast<int>(m_entityType);
         }
 
-        [[nodiscard]] EntityBroadType getBroadType() const override {
-            return m_entityBroadType;
+        [[nodiscard]] int getBroadType() const override {
+            return static_cast<int>(m_entityBroadType);
         }
 
         [[nodiscard]] virtual raylib::Rectangle getRect() const {
@@ -119,9 +102,11 @@ namespace core {
         EntityBroadType m_entityBroadType;
         EntityManager *m_entityManager;
         AssetManager *m_assetManager;
-        EntityResources *m_res;
+        raylib::Camera2D *m_screenCamera;
+        raylib::Camera2D *m_worldCamera;
         Map *m_map;
         GameManager *m_gameManager;
+        ILocals *m_iLocals;
         int m_layer = 1;
     };
 }

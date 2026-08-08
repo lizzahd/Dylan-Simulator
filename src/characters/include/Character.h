@@ -26,12 +26,13 @@ namespace core {
     class Character : public Actor {
     public:
         explicit Character(
-            ENTITY_REQUIREMENTS,
+            const int id,
+            ILocals *iLocals,
             const EntityType entityType,
             std::vector<CharacterAnimation> animationBank,
             const raylib::Vector2 pos,
             const raylib::Vector2 size)
-            : Actor(ENTITY_PARAMETERS, EntityBroadType::Character, entityType, pos, size)
+            : Actor(id, iLocals, EntityBroadType::Character, entityType, pos, size)
             , m_direction(Direction::Down)
             , m_animationBank(std::move(animationBank))
         {}

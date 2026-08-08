@@ -10,26 +10,26 @@ namespace core {
     class Npc : public Character {
     public:
         explicit Npc(
-            ENTITY_REQUIREMENTS,
+            const int id,
+            ILocals *iLocals,
             const std::vector<CharacterAnimation> &animationBank,
             const raylib::Vector2 pos,
             const raylib::Vector2 size)
-            : Character(
-                ENTITY_PARAMETERS, EntityType::Npc, animationBank, pos, size) {
-            m_animationBank[m_animationIndex].m_playing = true;
-        }
+            : Character(id, iLocals, EntityType::Npc, animationBank, pos, size)
+        {}
 
         void update() override;
     };
 
     class Dubi : public Npc {
     public:
-        Dubi(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
-        : Npc(ENTITY_PARAMETERS, {
-                CharacterAnimation(assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
-                CharacterAnimation(assetManager, "dubi_walk", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
-            }, pos, {140, 140})
-        {}
+        Dubi(const int id, ILocals *iLocals, const raylib::Vector2 pos)
+        : Npc(id, iLocals, {}, pos, {140, 140}) {
+            m_animationBank = {
+                CharacterAnimation(m_assetManager, "dubi_idle", raylib::Vector2(140, 140), {70, 115}, 5, 9, true, true),
+                CharacterAnimation(m_assetManager, "dubi_walk", raylib::Vector2(140, 140), {70, 115}, 5, 9, true),
+            };
+        }
 
         [[nodiscard]] raylib::Rectangle getRect() const override {
             const auto &anim = m_animationBank[m_animationIndex];
@@ -43,12 +43,13 @@ namespace core {
 
     class Dorian : public Npc {
     public:
-        Dorian(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
-        : Npc(ENTITY_PARAMETERS, {
-                CharacterAnimation(assetManager, "dorian_idle", raylib::Vector2(140, 140), {70, 115}, 1, 9, true),
-                CharacterAnimation(assetManager, "dorian_walk", raylib::Vector2(140, 140), {70, 115}, 1, 9, true),
-            }, pos, {140, 140})
-        {}
+        Dorian(const int id, ILocals *iLocals, const raylib::Vector2 pos)
+        : Npc(id, iLocals, {}, pos, {140, 140}) {
+            m_animationBank = {
+                CharacterAnimation(m_assetManager, "dorian_idle", raylib::Vector2(140, 140), {70, 115}, 1, 9, true, true),
+                CharacterAnimation(m_assetManager, "dorian_walk", raylib::Vector2(140, 140), {70, 115}, 1, 9, true),
+            };
+        }
 
         [[nodiscard]] raylib::Rectangle getRect() const override {
             const auto &anim = m_animationBank[m_animationIndex];

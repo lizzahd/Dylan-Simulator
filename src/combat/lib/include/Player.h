@@ -9,8 +9,8 @@
 namespace combat {
     class Player : public Character {
     public:
-        Player(ENTITY_REQUIREMENTS, const raylib::Vector2 pos)
-            : Character(ENTITY_PARAMETERS, EntityType::Player, pos, 16, 25)
+        Player(const int id, ILocals *iLocals, const raylib::Vector2 pos)
+            : Character(id, iLocals, EntityType::Player, pos, 16, 25)
         {}
 
         void update() override;

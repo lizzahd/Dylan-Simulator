@@ -65,7 +65,7 @@ namespace core {
     bool Interactable::canInteract() const {
         // TODO: Un-Hardcode
         return m_entityManager->breakableExecByType<Character>([&](const int, const auto other) {
-            if (other->getType() != EntityType::Player) {
+            if (other->getType() != static_cast<int>(EntityType::Player)) {
                 return false;
             }
 
@@ -80,7 +80,7 @@ namespace core {
     bool Interactable::isHovered() const {
         // Check if mouse position on pixel
         // This might be expensive
-        const auto [mx, my] = getScaledMousePos(*m_res->worldCamera, *m_res->screenCamera);
+        const auto [mx, my] = getScaledMousePos(*m_worldCamera, *m_screenCamera);
         const int x = static_cast<int>(mx - m_pos.x);
         const int y = static_cast<int>(my - m_pos.y);
         if (x < 0 || x >= m_size.x || y < 0 || y >= m_size.y) {

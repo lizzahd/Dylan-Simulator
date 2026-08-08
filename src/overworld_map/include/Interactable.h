@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <raylib-cpp/Vector2.hpp>
-#include <memory>
 #include <raylib-cpp/Color.hpp>
 #include <functional>
 
@@ -18,18 +17,20 @@
 namespace core {
     #define INTERACTION_DIST 150
 
-    using InteractableCallback = std::function<void(ENTITY_REQUIREMENTS)>;
+    using InteractableCallback = std::function<void(int id, ILocals *iLocals)>;
 
     class Interactable : public Actor {
     public:
         explicit Interactable(
-            ENTITY_REQUIREMENTS,
+            const int id,
+            ILocals *iLocals,
             std::string &tex,
             const raylib::Vector2 pos, const DialogueTextId dialogueTextId)
-            : Actor(ENTITY_PARAMETERS, EntityBroadType::Interactable, EntityType::Interactable, pos, assetManager->getTex(tex).GetSize())
+            : Actor(id, iLocals, EntityBroadType::Interactable, EntityType::Interactable, pos, {})
             , m_tex(std::move(tex))
             , m_dialogueTextId(dialogueTextId) {
             m_layer = 0;
+            m_size = m_assetManager->getTex(m_tex).GetSize();
         }
 
         void update() override;

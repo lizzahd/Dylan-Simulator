@@ -9,8 +9,8 @@
 namespace combat {
     class Character : public core::Actor {
     public:
-        Character(ENTITY_REQUIREMENTS, const EntityType entityType, const raylib::Vector2 pos, const float radius, const int maxHp)
-            : Actor(ENTITY_PARAMETERS, EntityBroadType::Character, entityType, pos, {})
+        Character(const int id, ILocals *iLocals, const EntityType entityType, const raylib::Vector2 pos, const float radius, const int maxHp)
+            : Actor(id, iLocals, EntityBroadType::Character, entityType, pos, {})
             , m_radius(radius)
             , m_maxHp(maxHp)
             , m_hp(maxHp)

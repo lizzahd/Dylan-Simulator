@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(hot_assets)
 FetchContent_Declare(
         hot_entities
         GIT_REPOSITORY https://github.com/lizzahd/Hot-Entities-Plus-Plus.git
-        GIT_TAG "1.0.0"
+        GIT_TAG "v2.0.1"
 )
 
 FetchContent_MakeAvailable(hot_entities)
@@ -49,11 +49,6 @@ add_library(core_lib STATIC
 )
 
 target_link_libraries(core_lib PUBLIC hot_assets)
-
-target_compile_definitions(core_lib PUBLIC
-    ENTITY_TYPES_HEADER=<EntityTypes.h>
-    ENTITY_MANAGER_EXTERNAL_HEADER=<EntityManagerExternal.h>
-)
 target_link_libraries(core_lib PUBLIC hot_entities)
 
 find_path(RAYLIB_CPP_INCLUDE_DIRS "raylib-cpp.hpp")
@@ -73,7 +68,6 @@ target_link_libraries(core_lib PUBLIC
 
 # ------ Subdirectories ------
 add_subdirectory(combat)
-add_subdirectory(gauntlet)
 add_subdirectory(level_editor)
 
 # -------- Main Game --------

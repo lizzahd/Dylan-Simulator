@@ -8,13 +8,14 @@
 namespace combat {
     class Projectile : public core::Actor {
     public:
-        Projectile(ENTITY_REQUIREMENTS,
+        Projectile(const int id,
+            ILocals *iLocals,
             const EntityType target,
             const raylib::Vector2 pos,
             const float angle,
             const int damage,
             const float radius)
-                : Actor(ENTITY_PARAMETERS, EntityBroadType::Projectile, EntityType::Projectile, pos, {})
+                : Actor(id, iLocals, EntityBroadType::Projectile, EntityType::Projectile, pos, {})
                 , m_target(target)
                 , m_angle(angle)
                 , m_damage(damage)

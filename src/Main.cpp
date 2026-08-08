@@ -38,7 +38,7 @@ int main() {
     worldCamera.rotation = 0;
     worldCamera.zoom = 1.0f;
 
-    raylib::Camera2D screenCamera{};
+    raylib::Camera2D screenCamera;
     screenCamera.offset = Vector2{0, 0};
     screenCamera.target = Vector2{0, 0};
     screenCamera.rotation = 0;

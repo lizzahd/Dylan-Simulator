@@ -17,7 +17,7 @@ FetchContent_MakeAvailable(hot_assets)
 FetchContent_Declare(
         hot_entities
         GIT_REPOSITORY https://github.com/lizzahd/Hot-Entities-Plus-Plus.git
-        GIT_TAG "main"
+        GIT_TAG "1.0.0"
 )
 
 FetchContent_MakeAvailable(hot_entities)

@@ -12,6 +12,10 @@ namespace combat {
                 return false;
             }
 
+            if (other->isDead()) {
+                return false;
+            }
+
             if (CheckCollisionCircles(m_pos, m_radius, other->m_pos, other->m_radius)) {
                 other->hurt(m_damage);
                 m_isDead = true;

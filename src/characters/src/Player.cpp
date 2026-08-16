@@ -4,6 +4,7 @@
 
 #include <Player.h>
 
+#include "GameManager.h"
 #include "Npc.h"
 
 #define PLAYER_MOVE_SPEED 2.5
@@ -24,6 +25,10 @@ namespace core {
     }
 
     void Player::moveDirection() {
+        if (m_gameManager->m_inDialogue) {
+            return;
+        }
+
         const bool up = IsKeyDown(KEY_W);
         const bool down = IsKeyDown(KEY_S);
         const bool left = IsKeyDown(KEY_A);

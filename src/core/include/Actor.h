@@ -34,7 +34,8 @@ namespace core {
             , m_id(id)
             , m_entityBroadType(broadEntityType)
             , m_iLocals(iLocals) {
-            auto *locals = dynamic_cast<Locals *>(iLocals);
+            // Unpack locals
+            auto *locals = dynamic_cast<Locals *>(iLocals); // NOLINT this can't be const for memory access reasons
             m_entityManager = (EntityManager *) locals->entityManager; // NOLINT Why do I need to c-cast this shit? What the hell?
             m_assetManager = locals->assetManager;
             m_screenCamera = locals->screenCamera;
@@ -42,8 +43,6 @@ namespace core {
             m_map = locals->map;
             m_gameManager = locals->gameManager;
         }
-
-        ~Actor() override = default;
 
         [[nodiscard]] bool isDead() const override {
             return m_isDead;

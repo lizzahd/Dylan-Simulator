@@ -34,11 +34,14 @@ namespace combat {
         m_angle = std::atan2f(player->m_pos.y - m_pos.y, player->m_pos.x - m_pos.x);
 
         if (m_attackCooldown-- <= 0) {
-            m_entityManager->create<Projectile>(EntityType::Player, m_pos, m_angle, 1, 3);
+            m_entityManager->create<Projectile>(EntityType::Player, m_pos, m_angle, 10, 3);
             m_attackCooldown = m_maxAttackCooldown;
         }
 
         Character::update();
+
+        m_pos += m_vel;
+        m_vel /= 1.1;
     }
 
     void Enemy::draw() const {

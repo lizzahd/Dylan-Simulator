@@ -102,9 +102,9 @@ void GameManager::showDialogue(const core::DialogueTextId dialogueTextId) {
         return;
     }
 
-    pause();
     m_dialogueTextId = dialogueTextId;
     m_dialogueTextMap.at(m_dialogueTextId).reset();
+    m_inDialogue = true;
 }
 
 void GameManager::closeDialogue() {
@@ -113,5 +113,5 @@ void GameManager::closeDialogue() {
     }
 
     m_dialogueTextId = DIALOGUE_TEXT_ID_CLOSE;
-    unpause();
+    m_inDialogue = false;
 }

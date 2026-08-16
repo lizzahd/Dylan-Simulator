@@ -52,8 +52,19 @@ int main() {
     GameManager gameManager;
 
     // Entity management
-    EntityManager entityManager(&assetManager, &camera, &map, &gameManager);
-    entityManager.registerBroadType(EntityBroadType::Character, typeid(combat::Character), typeid(core::Actor));
+    EntityManager entityManager;
+    entityManager.registerBroadType(static_cast<int>(EntityBroadType::Character), typeid(combat::Character), typeid(core::Actor));
+
+    // Initialize locals and entity manager
+    Locals locals {
+        &entityManager,
+        &assetManager,
+        &camera,
+        nullptr,
+        &map,
+        &gameManager,
+    };
+    entityManager.init(&locals);
 
     // Entities
     entityManager.create<combat::Player>(raylib::Vector2{100, 150});

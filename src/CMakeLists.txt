@@ -46,6 +46,7 @@ add_library(core_lib STATIC
         characters/src/CharacterAnimation.cpp
         core/include/PolyAnimation.h
         core/src/PolyAnimation.cpp
+        core/src/Signal.cpp
 )
 
 target_link_libraries(core_lib PUBLIC hot_assets)

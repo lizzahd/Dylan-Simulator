@@ -10,6 +10,7 @@
 #include <Actor.h>
 #include <GameManager.h>
 #include <EntityTypes.h>
+#include <Signal.h>
 
 #include "Npc.h"
 
@@ -87,6 +88,14 @@ int main() {
         width = GetScreenWidth();
         height = GetScreenHeight();
         raylib::Rectangle dst = {0, 0, static_cast<float>(width), static_cast<float>(height)};
+
+        const auto [mdx, mdy] = GetMouseDelta();
+        if (abs(mdx) > 0.1 || abs(mdy) > 0.1) {
+            json input_args;
+            input_args["mouse_motion"]["dx"] = mdx;
+            input_args["mouse_motion"]["dy"] = mdy;
+            SignalManager::input_event.emit(input_args);
+        }
 
         BeginTextureMode(target);
             ClearBackground(BLACK);

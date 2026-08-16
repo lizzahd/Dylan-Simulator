@@ -21,6 +21,7 @@ public:
     void closeDialogue();
 
     bool m_paused = false;
+    bool m_inDialogue = false;
     double m_time = 0.0;
     std::unordered_map<core::DialogueTextId, core::DialogueText> m_dialogueTextMap;
     core::DialogueTextId m_dialogueTextId = DIALOGUE_TEXT_ID_CLOSE;
